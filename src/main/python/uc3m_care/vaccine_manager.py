@@ -12,8 +12,6 @@ from .vaccine_manager_config import JSON_FILES_PATH
 
 class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
-    def __init__(self):
-        pass
 
     @staticmethod
     def validate_guid(guid):
