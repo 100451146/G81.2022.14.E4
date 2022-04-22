@@ -111,25 +111,14 @@ class VaccineManager:
                                 phone_number,
                                 age):
         """Register the patinent into the patients file"""
-        myregex = re.compile(r"(Regular|Family)")
-        res = myregex.fullmatch(registration_type)
-        if not res:
-            raise VaccineManagementException ("Registration type is nor valid")
+        self.registration_validate(registration_type)
 
-        myregex = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
-        res = myregex.fullmatch(name_surname)
-        if not res:
-            raise VaccineManagementException ("name surname is not valid")
+        self.names_surname_validate(name_surname)
 
-        myregex = re.compile(r"^(\+)[0-9]{11}")
-        res = myregex.fullmatch(phone_number)
-        if not res:
-            raise VaccineManagementException ("phone number is not valid")
-        if age.isnumeric():
-            if (int(age) < 6 or int(age) > 125 ):
-                raise VaccineManagementException("age is not valid")
-        else:
-            raise VaccineManagementException("age is not valid")
+        self.phone_nymber_validate(phone_number)
+
+        self.age_validate(age)
+
         if self.validate_guid(patient_id):
             my_patient = VaccinePatientRegister(patient_id,
                                                 name_surname,
@@ -140,6 +129,31 @@ class VaccineManager:
         self.save_store(my_patient)
 
         return my_patient.patient_sys_id
+
+    def age_validate(self, age):
+        if age.isnumeric():
+            if (int(age) < 6 or int(age) > 125):
+                raise VaccineManagementException("age is not valid")
+        else:
+            raise VaccineManagementException("age is not valid")
+
+    def phone_nymber_validate(self, phone_number):
+        myregex = re.compile(r"^(\+)[0-9]{11}")
+        res = myregex.fullmatch(phone_number)
+        if not res:
+            raise VaccineManagementException("phone number is not valid")
+
+    def names_surname_validate(self, name_surname):
+        myregex = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
+        res = myregex.fullmatch(name_surname)
+        if not res:
+            raise VaccineManagementException("name surname is not valid")
+
+    def registration_validate(self, registration_type):
+        myregex = re.compile(r"(Regular|Family)")
+        res = myregex.fullmatch(registration_type)
+        if not res:
+            raise VaccineManagementException("Registration type is nor valid")
 
     def get_vaccine_date (self, input_file):
         """Gets an appoinment for a registered patient"""
@@ -162,10 +176,7 @@ class VaccineManager:
             raise  VaccineManagementException("Bad label patient_id") from ex
 
         try:
-            myregex = re.compile(r"^(\+)[0-9]{11}")
-            res = myregex.fullmatch(data["ContactPhoneNumber"])
-            if not res:
-                raise VaccineManagementException("phone number is not valid")
+            self.phone_nymber_validate(data["ContactPhoneNumber"])
         except KeyError as ex:
             raise VaccineManagementException("Bad label contact phone") from ex
         file_store = JSON_FILES_PATH + "store_patient.json"
