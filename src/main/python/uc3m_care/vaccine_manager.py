@@ -21,23 +21,23 @@ class VaccineManager:
             myregex = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
                                  "{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
                                  re.IGNORECASE)
-            res = myregex.fullmatch(my_uuid.__str__())
-            if not res:
+            result = myregex.fullmatch(my_uuid.__str__())
+            if not result:
                 raise VaccineManagementException ("UUID invalid")
-        except ValueError as val_er:
-            raise VaccineManagementException ("Id received is not a UUID") from val_er
+        except ValueError as value_error:
+            raise VaccineManagementException ("Id received is not a UUID") from value_error
         return True
 
     @staticmethod
     def validate_date_signature(signature):
         """Method for validating sha256 values"""
         myregex = re.compile(r"[0-9a-fA-F]{64}$")
-        res = myregex.fullmatch(signature)
-        if not res:
+        result = myregex.fullmatch(signature)
+        if not result:
             raise VaccineManagementException("date_signature format is not valid")
 
     @staticmethod
-    def save_store(data) :
+    def save_store(json_data) :
         """Medthod for savint the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
         #first read the file
@@ -52,13 +52,13 @@ class VaccineManager:
 
         found = False
         for item in data_list:
-            if item["_VaccinePatientRegister__patient_id"] == data.patient_id:
-                if (item["_VaccinePatientRegister__registration_type"] == data.vaccine_type) and \
-                         (item["_VaccinePatientRegister__full_name"] == data.full_name):
+            if item["_VaccinePatientRegister__patient_id"] == json_data.patient_id:
+                if (item["_VaccinePatientRegister__registration_type"] == json_data.vaccine_type) and \
+                         (item["_VaccinePatientRegister__full_name"] == json_data.full_name):
                     found = True
 
         if found is False:
-            data_list.append(data.__dict__)
+            data_list.append(json_data.__dict__)
 
         try:
             with open(file_store, "w", encoding="utf-8", newline="") as file:
