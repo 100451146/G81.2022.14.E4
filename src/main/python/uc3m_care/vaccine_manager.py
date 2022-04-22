@@ -29,10 +29,10 @@ class VaccineManager:
         return True
 
     @staticmethod
-    def validate_date_signature(s):
+    def validate_date_signature(signature):
         """Method for validating sha256 values"""
         myregex = re.compile(r"[0-9a-fA-F]{64}$")
-        res = myregex.fullmatch(s)
+        res = myregex.fullmatch(signature)
         if not res:
             raise VaccineManagementException("date_signature format is not valid")
 
