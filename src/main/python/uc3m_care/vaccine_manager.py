@@ -113,12 +113,6 @@ class VaccineManager:
         """Register the patinent into the patients file"""
         self.registration_validate(registration_type)
 
-        self.name_surname_validate(name_surname)
-
-        self.phone_nymber_validate(phone_number)
-
-        self.age_validate(age)
-
         if self.validate_guid(patient_id):
             my_patient = VaccinePatientRegister(patient_id,
                                                 name_surname,
@@ -137,7 +131,7 @@ class VaccineManager:
         else:
             raise VaccineManagementException("age is not valid")
 
-    def phone_nymber_validate(self, phone_number: str)-> None:
+    def phone_number_validate(self, phone_number: str)-> None:
         phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
         result = phone_number_pattern.fullmatch(phone_number)
         if not result:
@@ -176,7 +170,7 @@ class VaccineManager:
             raise  VaccineManagementException("Bad label patient_id") from ex
 
         try:
-            self.phone_nymber_validate(data["ContactPhoneNumber"])
+            self.phone_number_validate(data["ContactPhoneNumber"])
         except KeyError as ex:
             raise VaccineManagementException("Bad label contact phone") from ex
         file_store = JSON_FILES_PATH + "store_patient.json"

@@ -1,17 +1,19 @@
 """MODULE: access_request. Contains the access request class"""
 import hashlib
 import json
+import re
 from datetime import datetime
+from .vaccine_management_exception import VaccineManagementException
 
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
     #pylint: disable=too-many-arguments
     def __init__( self, patient_id, full_name, registration_type, phone_number, age ):
         self.__patient_id = patient_id
-        self.__full_name = full_name
-        self.__registration_type = registration_type
-        self.__phone_number = phone_number
-        self.__age = age
+        self.__full_name = self.name_surname_validate(full_name)
+        self.__registration_type = self.registration_validate(registration_type)
+        self.__phone_number = self.phone_number_validate(phone_number)
+        self.__age = self.age_validate(age)
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
         #self.__time_stamp = 1645542405.232003
@@ -44,7 +46,7 @@ class VaccinePatientRegister:
         return self.__phone_number
     @phone_number.setter
     def phone_number( self, value ):
-        self.__phone_number = value
+        self.__phone_number = self.phone_number_validate(value)
 
     @property
     def patient_id( self ):
@@ -73,3 +75,32 @@ class VaccinePatientRegister:
     def patient_sys_id(self):
         """Property representing the md5 generated"""
         return self.__patient_sys_id
+
+    def age_validate(self, age: int):
+        if age.isnumeric():
+            if (int(age) < 6 or int(age) > 125):
+                raise VaccineManagementException("age is not valid")
+        else:
+            raise VaccineManagementException("age is not valid")
+        return age
+
+    def phone_number_validate(self, phone_number: str):
+        phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
+        result = phone_number_pattern.fullmatch(phone_number)
+        if not result:
+            raise VaccineManagementException("phone number is not valid")
+        return phone_number
+
+    def name_surname_validate(self, name_surname: str):
+        name_surname_pattern = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
+        result = name_surname_pattern.fullmatch(name_surname)
+        if not result:
+            raise VaccineManagementException("name surname is not valid")
+        return name_surname
+
+    def registration_validate(self, registration_type: str):
+        registration_pattern = re.compile(r"(Regular|Family)")
+        result = registration_pattern.fullmatch(registration_type)
+        if not result:
+            raise VaccineManagementException("Registration type is nor valid")
+        return registration_type
