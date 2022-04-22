@@ -18,10 +18,10 @@ class VaccineManager:
         "Method for validating uuid  v4"
         try:
             my_uuid = uuid.UUID(guid)
-            myregex = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
+            uuid_pattern = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
                                  "{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
                                  re.IGNORECASE)
-            result = myregex.fullmatch(my_uuid.__str__())
+            result = uuid_pattern.fullmatch(my_uuid.__str__())
             if not result:
                 raise VaccineManagementException ("UUID invalid")
         except ValueError as value_error:
@@ -31,8 +31,8 @@ class VaccineManager:
     @staticmethod
     def validate_date_signature(signature: str)-> None:
         """Method for validating sha256 values"""
-        myregex = re.compile(r"[0-9a-fA-F]{64}$")
-        result = myregex.fullmatch(signature)
+        date_signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
+        result = date_signature_pattern.fullmatch(signature)
         if not result:
             raise VaccineManagementException("date_signature format is not valid")
 
@@ -113,7 +113,7 @@ class VaccineManager:
         """Register the patinent into the patients file"""
         self.registration_validate(registration_type)
 
-        self.names_surname_validate(name_surname)
+        self.name_surname_validate(name_surname)
 
         self.phone_nymber_validate(phone_number)
 
@@ -138,20 +138,20 @@ class VaccineManager:
             raise VaccineManagementException("age is not valid")
 
     def phone_nymber_validate(self, phone_number: str)-> None:
-        myregex = re.compile(r"^(\+)[0-9]{11}")
-        result = myregex.fullmatch(phone_number)
+        phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
+        result = phone_number_pattern.fullmatch(phone_number)
         if not result:
             raise VaccineManagementException("phone number is not valid")
 
-    def names_surname_validate(self, name_surname: str)-> None:
-        myregex = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
-        result = myregex.fullmatch(name_surname)
+    def name_surname_validate(self, name_surname: str)-> None:
+        name_surname_pattern = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
+        result = name_surname_pattern.fullmatch(name_surname)
         if not result:
             raise VaccineManagementException("name surname is not valid")
 
     def registration_validate(self, registration_type: str)-> None:
-        myregex = re.compile(r"(Regular|Family)")
-        result = myregex.fullmatch(registration_type)
+        registration_pattern = re.compile(r"(Regular|Family)")
+        result = registration_pattern.fullmatch(registration_type)
         if not result:
             raise VaccineManagementException("Registration type is nor valid")
 
