@@ -130,29 +130,29 @@ class VaccineManager:
 
         return my_patient.patient_sys_id
 
-    def age_validate(self, age):
+    def age_validate(self, age: int)-> None:
         if age.isnumeric():
             if (int(age) < 6 or int(age) > 125):
                 raise VaccineManagementException("age is not valid")
         else:
             raise VaccineManagementException("age is not valid")
 
-    def phone_nymber_validate(self, phone_number):
+    def phone_nymber_validate(self, phone_number: str)-> None:
         myregex = re.compile(r"^(\+)[0-9]{11}")
-        res = myregex.fullmatch(phone_number)
-        if not res:
+        result = myregex.fullmatch(phone_number)
+        if not result:
             raise VaccineManagementException("phone number is not valid")
 
-    def names_surname_validate(self, name_surname):
+    def names_surname_validate(self, name_surname: str)-> None:
         myregex = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
-        res = myregex.fullmatch(name_surname)
-        if not res:
+        result = myregex.fullmatch(name_surname)
+        if not result:
             raise VaccineManagementException("name surname is not valid")
 
-    def registration_validate(self, registration_type):
+    def registration_validate(self, registration_type: str)-> None:
         myregex = re.compile(r"(Regular|Family)")
-        res = myregex.fullmatch(registration_type)
-        if not res:
+        result = myregex.fullmatch(registration_type)
+        if not result:
             raise VaccineManagementException("Registration type is nor valid")
 
     def get_vaccine_date (self, input_file):
