@@ -14,7 +14,7 @@ class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
 
     @staticmethod
-    def validate_guid(guid):
+    def validate_guid(guid: str):
         "Method for validating uuid  v4"
         try:
             my_uuid = uuid.UUID(guid)
@@ -29,7 +29,7 @@ class VaccineManager:
         return True
 
     @staticmethod
-    def validate_date_signature(signature):
+    def validate_date_signature(signature: str)-> None:
         """Method for validating sha256 values"""
         myregex = re.compile(r"[0-9a-fA-F]{64}$")
         result = myregex.fullmatch(signature)
@@ -37,7 +37,7 @@ class VaccineManager:
             raise VaccineManagementException("date_signature format is not valid")
 
     @staticmethod
-    def save_store(json_data) :
+    def save_store(json_data: VaccinePatientRegister)-> True:
         """Medthod for savint the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
         #first read the file
