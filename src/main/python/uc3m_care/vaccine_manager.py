@@ -50,14 +50,14 @@ class VaccineManager:
         except json.JSONDecodeError as json_exception:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from json_exception
 
-        found_values = False
+        found_correct_values = False
         for item in data_list:
             if item["_VaccinePatientRegister__patient_id"] == json_data.patient_id:
                 if (item["_VaccinePatientRegister__registration_type"] == json_data.vaccine_type) and \
                          (item["_VaccinePatientRegister__full_name"] == json_data.full_name):
-                    found_values = True
+                    found_correct_values = True
 
-        if found_values is False:
+        if found_correct_values is False:
             data_list.append(json_data.__dict__)
 
         try:
@@ -66,42 +66,42 @@ class VaccineManager:
         except FileNotFoundError as json_exception:
             raise VaccineManagementException("Wrong file or file path") from json_exception
 
-        if found_values is True:
+        if found_correct_values is True:
             raise VaccineManagementException("patien_id is registered in store_patient")
         return True
 
     @staticmethod
-    def save_fast(data):
+    def save_fast(json_data: VaccinePatientRegister)-> None:
         """Method for saving the patients store"""
         patients_store = JSON_FILES_PATH + "store_patient.json"
-        with open(patients_store, "r+", encoding="utf-8", newline="") as file:
-            data_list = json.load(file)
-            data_list.append(data.__dict__)
-            file.seek(0)
-            json.dump(data_list, file, indent=2)
+        with open(patients_store, "r+", encoding="utf-8", newline="") as json_file:
+            data_list = json.load(json_file)
+            data_list.append(json_data.__dict__)
+            json_file.seek(0)
+            json.dump(data_list, json_file, indent=2)
 
     @staticmethod
-    def save_store_date(date):
+    def save_store_date(json_data: VaccinePatientRegister)-> None:
         """Saves the appoinment into a file"""
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
         try:
-            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
+            with open(file_store_date, "r", encoding="utf-8", newline="") as json_file:
+                data_list = json.load(json_file)
         except FileNotFoundError:
             # file is not found , so  init my data_list
             data_list = []
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        except json.JSONDecodeError as json_exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from json_exception
 
         #append the date
-        data_list.append(date.__dict__)
+        data_list.append(json_data.__dict__)
 
         try:
-            with open(file_store_date, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException("Wrong file or file path") from ex
+            with open(file_store_date, "w", encoding="utf-8", newline="") as json_file:
+                json.dump(data_list, json_file, indent=2)
+        except FileNotFoundError as json_exception:
+            raise VaccineManagementException("Wrong file or file path") from json_exception
 
 
     #pylint: disable=too-many-arguments
