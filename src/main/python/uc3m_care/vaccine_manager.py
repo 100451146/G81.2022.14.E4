@@ -14,14 +14,14 @@ class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
 
     @staticmethod
-    def validate_guid(guid: str)-> True:
+    def validate_guid(patient_id):
         "Method for validating uuid  v4"
         try:
-            my_uuid = uuid.UUID(guid)
+            my_patient_id = uuid.UUID(patient_id)
             uuid_pattern = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
                                  "{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
                                  re.IGNORECASE)
-            result = uuid_pattern.fullmatch(my_uuid.__str__())
+            result = uuid_pattern.fullmatch(my_patient_id.__str__())
             if not result:
                 raise VaccineManagementException ("UUID invalid")
         except ValueError as value_error:
@@ -31,42 +31,42 @@ class VaccineManager:
     @staticmethod
     def validate_date_signature(signature: str)-> None:
         """Method for validating sha256 values"""
-        date_signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
-        result = date_signature_pattern.fullmatch(signature)
+        signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
+        result = signature_pattern.fullmatch(signature)
         if not result:
             raise VaccineManagementException("date_signature format is not valid")
 
     @staticmethod
-    def save_store(json_data: VaccinePatientRegister)-> True:
+    def save_store(json_data: VaccinePatientRegister)-> bool:
         """Medthod for savint the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
         #first read the file
         try:
-            with open(file_store, "r", encoding="utf-8", newline="") as json_file:
-                data_list = json.load(json_file)
+            with open(file_store, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
         except FileNotFoundError:
             # file is not found , so  init my data_list
             data_list = []
-        except json.JSONDecodeError as json_exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from json_exception
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
 
-        found_correct_values = False
+        key_found = False
         for item in data_list:
             if item["_VaccinePatientRegister__patient_id"] == json_data.patient_id:
                 if (item["_VaccinePatientRegister__registration_type"] == json_data.vaccine_type) and \
                          (item["_VaccinePatientRegister__full_name"] == json_data.full_name):
-                    found_correct_values = True
+                    key_found = True
 
-        if found_correct_values is False:
+        if key_found is False:
             data_list.append(json_data.__dict__)
 
         try:
-            with open(file_store, "w", encoding="utf-8", newline="") as json_file:
-                json.dump(data_list, json_file, indent=2)
-        except FileNotFoundError as json_exception:
-            raise VaccineManagementException("Wrong file or file path") from json_exception
+            with open(file_store, "w", encoding="utf-8", newline="") as file:
+                json.dump(data_list, file, indent=2)
+        except FileNotFoundError as exception:
+            raise VaccineManagementException("Wrong file or file path") from exception
 
-        if found_correct_values is True:
+        if key_found is True:
             raise VaccineManagementException("patien_id is registered in store_patient")
         return True
 
@@ -74,11 +74,11 @@ class VaccineManager:
     def save_fast(json_data: VaccinePatientRegister)-> None:
         """Method for saving the patients store"""
         patients_store = JSON_FILES_PATH + "store_patient.json"
-        with open(patients_store, "r+", encoding="utf-8", newline="") as json_file:
-            data_list = json.load(json_file)
+        with open(patients_store, "r+", encoding="utf-8", newline="") as file:
+            data_list = json.load(file)
             data_list.append(json_data.__dict__)
-            json_file.seek(0)
-            json.dump(data_list, json_file, indent=2)
+            file.seek(0)
+            json.dump(data_list, file, indent=2)
 
     @staticmethod
     def save_store_date(json_data: VaccinePatientRegister)-> None:
@@ -86,32 +86,32 @@ class VaccineManager:
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
         try:
-            with open(file_store_date, "r", encoding="utf-8", newline="") as json_file:
-                data_list = json.load(json_file)
+            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
         except FileNotFoundError:
             # file is not found , so  init my data_list
             data_list = []
-        except json.JSONDecodeError as json_exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from json_exception
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
 
         #append the date
         data_list.append(json_data.__dict__)
 
         try:
-            with open(file_store_date, "w", encoding="utf-8", newline="") as json_file:
-                json.dump(data_list, json_file, indent=2)
-        except FileNotFoundError as json_exception:
-            raise VaccineManagementException("Wrong file or file path") from json_exception
+            with open(file_store_date, "w", encoding="utf-8", newline="") as file:
+                json.dump(data_list, file, indent=2)
+        except FileNotFoundError as exception:
+            raise VaccineManagementException("Wrong file or file path") from exception
 
 
     #pylint: disable=too-many-arguments
-    def request_vaccination_id (self, patient_id,
-                                name_surname,
-                                registration_type,
-                                phone_number,
-                                age):
+    def request_vaccination_id (self, patient_id: str,
+                                name_surname: str,
+                                registration_type: str,
+                                phone_number: str,
+                                age: str):
+
         """Register the patinent into the patients file"""
-        self.registration_validate(registration_type)
 
         if self.validate_guid(patient_id):
             my_patient = VaccinePatientRegister(patient_id,
@@ -124,30 +124,11 @@ class VaccineManager:
 
         return my_patient.patient_sys_id
 
-    def age_validate(self, age: int)-> None:
-        if age.isnumeric():
-            if (int(age) < 6 or int(age) > 125):
-                raise VaccineManagementException("age is not valid")
-        else:
-            raise VaccineManagementException("age is not valid")
-
-    def phone_number_validate(self, phone_number: str)-> None:
+    def validate_phone_number(self, phone_number: str)-> None:
         phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
         result = phone_number_pattern.fullmatch(phone_number)
         if not result:
             raise VaccineManagementException("phone number is not valid")
-
-    def name_surname_validate(self, name_surname: str)-> None:
-        name_surname_pattern = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
-        result = name_surname_pattern.fullmatch(name_surname)
-        if not result:
-            raise VaccineManagementException("name surname is not valid")
-
-    def registration_validate(self, registration_type: str)-> None:
-        registration_pattern = re.compile(r"(Regular|Family)")
-        result = registration_pattern.fullmatch(registration_type)
-        if not result:
-            raise VaccineManagementException("Registration type is nor valid")
 
     def get_vaccine_date (self, input_file):
         """Gets an appoinment for a registered patient"""
@@ -170,7 +151,7 @@ class VaccineManager:
             raise  VaccineManagementException("Bad label patient_id") from ex
 
         try:
-            self.phone_number_validate(data["ContactPhoneNumber"])
+            self.validate_phone_number(data["ContactPhoneNumber"])
         except KeyError as ex:
             raise VaccineManagementException("Bad label contact phone") from ex
         file_store = JSON_FILES_PATH + "store_patient.json"
