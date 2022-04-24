@@ -4,6 +4,7 @@ import json
 import re
 from datetime import datetime
 from .vaccine_management_exception import VaccineManagementException
+from .attribute_registration_type import RegistrationType
 
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
@@ -11,7 +12,7 @@ class VaccinePatientRegister:
     def __init__( self, patient_id, full_name, registration_type, phone_number, age):
         self.__patient_id = patient_id
         self.__full_name = self.validate_full_name(full_name)
-        self.__registration_type = self.validate_registration_type(registration_type)
+        self.__registration_type = RegistrationType(registration_type).value
         self.__phone_number = self.validate_phone_number(phone_number)
         self.__age = self.validate_age(age)
         justnow = datetime.utcnow()
@@ -39,7 +40,7 @@ class VaccinePatientRegister:
 
     @vaccine_type.setter
     def vaccine_type( self, value ):
-        self.__registration_type = self.validate_registration_type(value)
+        self.__registration_type = RegistrationType(value).value
 
     @property
     def phone_number( self ):
@@ -93,13 +94,6 @@ class VaccinePatientRegister:
         if not result:
             raise VaccineManagementException("name surname is not valid")
         return name_surname
-
-    def validate_registration_type(self, registration_type: str)-> str:
-        registration_type_pattern = re.compile(r"(Regular|Family)")
-        result = registration_type_pattern.fullmatch(registration_type)
-        if not result:
-            raise VaccineManagementException("Registration type is nor valid")
-        return registration_type
 
     def validate_phone_number(self, phone_number: str)-> str:
         phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
