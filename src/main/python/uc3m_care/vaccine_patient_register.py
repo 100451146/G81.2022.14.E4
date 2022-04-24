@@ -1,14 +1,12 @@
 """MODULE: access_request. Contains the access request class"""
 import hashlib
 import json
-import re
-import uuid
 from datetime import datetime
-from .vaccine_management_exception import VaccineManagementException
 from .attribute_registration_type import RegistrationType
 from .attribute_uuid import Uuid
 from .attribute_full_name import FullName
 from .attribute_age import Age
+from .attribute_phone_number import PhoneNumber
 
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
@@ -17,7 +15,7 @@ class VaccinePatientRegister:
         self.__patient_id = Uuid(patient_id).value
         self.__full_name = FullName(full_name).value
         self.__registration_type = RegistrationType(registration_type).value
-        self.__phone_number = self.validate_phone_number(phone_number)
+        self.__phone_number = PhoneNumber(phone_number).value
         self.__age = Age(age).value
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
@@ -53,7 +51,7 @@ class VaccinePatientRegister:
 
     @phone_number.setter
     def phone_number( self, value ):
-        self.__phone_number = self.validate_phone_number(value)
+        self.__phone_number = PhoneNumber(value).value
 
     @property
     def patient_id( self ):
@@ -83,11 +81,4 @@ class VaccinePatientRegister:
     def patient_sys_id(self):
         """Property representing the md5 generated"""
         return self.__patient_sys_id
-
-    def validate_phone_number(self, phone_number: str)-> str:
-        phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
-        result = phone_number_pattern.fullmatch(phone_number)
-        if not result:
-            raise VaccineManagementException("phone number is not valid")
-        return phone_number
 
