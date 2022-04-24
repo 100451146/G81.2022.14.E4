@@ -1,3 +1,4 @@
+
 from .attribute import Attribute
 
 class RegistrationType(Attribute):

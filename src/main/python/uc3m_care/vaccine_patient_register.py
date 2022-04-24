@@ -7,13 +7,14 @@ from datetime import datetime
 from .vaccine_management_exception import VaccineManagementException
 from .attribute_registration_type import RegistrationType
 from .attribute_uuid import Uuid
+from .attribute_full_name import FullName
 
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
     #pylint: disable=too-many-arguments
     def __init__( self, patient_id, full_name, registration_type, phone_number, age):
         self.__patient_id = Uuid(patient_id).value
-        self.__full_name = self.validate_full_name(full_name)
+        self.__full_name = FullName(full_name).value
         self.__registration_type = RegistrationType(registration_type).value
         self.__phone_number = self.validate_phone_number(phone_number)
         self.__age = self.validate_age(age)
@@ -33,7 +34,7 @@ class VaccinePatientRegister:
 
     @full_name.setter
     def full_name( self, value ):
-        self.__full_name = self.validate_full_name(value)
+        self.__full_name = FullName(value).value
 
     @property
     def vaccine_type( self ):
@@ -89,13 +90,6 @@ class VaccinePatientRegister:
         else:
             raise VaccineManagementException("age is not valid")
         return age
-
-    def validate_full_name(self, name_surname: str)-> str:
-        full_name_pattern = re.compile(r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$")
-        result = full_name_pattern.fullmatch(name_surname)
-        if not result:
-            raise VaccineManagementException("name surname is not valid")
-        return name_surname
 
     def validate_phone_number(self, phone_number: str)-> str:
         phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
