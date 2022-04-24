@@ -14,14 +14,14 @@ class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
 
     @staticmethod
-    def validate_guid(patient_id):
+    def validate_guid(patient_id: str)-> bool:
         "Method for validating uuid  v4"
         try:
-            my_patient_id = uuid.UUID(patient_id)
+            my_uuid = uuid.UUID(patient_id)
             uuid_pattern = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
                                  "{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
                                  re.IGNORECASE)
-            result = uuid_pattern.fullmatch(my_patient_id.__str__())
+            result = uuid_pattern.fullmatch(my_uuid.__str__())
             if not result:
                 raise VaccineManagementException ("UUID invalid")
         except ValueError as value_error:
@@ -37,7 +37,7 @@ class VaccineManager:
             raise VaccineManagementException("date_signature format is not valid")
 
     @staticmethod
-    def save_store(json_data: VaccinePatientRegister)-> bool:
+    def save_store(json_data: VaccinePatientRegister)-> True:
         """Medthod for savint the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
         #first read the file
@@ -109,8 +109,7 @@ class VaccineManager:
                                 name_surname: str,
                                 registration_type: str,
                                 phone_number: str,
-                                age: str):
-
+                                age: str)-> str:
         """Register the patinent into the patients file"""
 
         if self.validate_guid(patient_id):
@@ -124,10 +123,10 @@ class VaccineManager:
 
         return my_patient.patient_sys_id
 
-    def validate_phone_number(self, phone_number: str)-> None:
-        phone_number_pattern = re.compile(r"^(\+)[0-9]{11}")
-        result = phone_number_pattern.fullmatch(phone_number)
-        if not result:
+    def validate_phone_number(self, phone_number):
+        myregex = re.compile(r"^(\+)[0-9]{11}")
+        res = myregex.fullmatch(phone_number)
+        if not res:
             raise VaccineManagementException("phone number is not valid")
 
     def get_vaccine_date (self, input_file):
