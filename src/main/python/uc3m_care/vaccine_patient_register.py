@@ -2,15 +2,17 @@
 import hashlib
 import json
 import re
+import uuid
 from datetime import datetime
 from .vaccine_management_exception import VaccineManagementException
 from .attribute_registration_type import RegistrationType
+from .attribute_uuid import Uuid
 
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
     #pylint: disable=too-many-arguments
     def __init__( self, patient_id, full_name, registration_type, phone_number, age):
-        self.__patient_id = patient_id
+        self.__patient_id = Uuid(patient_id).value
         self.__full_name = self.validate_full_name(full_name)
         self.__registration_type = RegistrationType(registration_type).value
         self.__phone_number = self.validate_phone_number(phone_number)
@@ -58,7 +60,7 @@ class VaccinePatientRegister:
 
     @patient_id.setter
     def patient_id( self, value ):
-        self.__patient_id = value
+        self.__patient_id = Uuid(value).value
 
     @property
     def time_stamp(self):
@@ -101,3 +103,4 @@ class VaccinePatientRegister:
         if not result:
             raise VaccineManagementException("phone number is not valid")
         return phone_number
+

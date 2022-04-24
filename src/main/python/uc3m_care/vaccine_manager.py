@@ -14,25 +14,10 @@ class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
 
     @staticmethod
-    def validate_guid(patient_id: str)-> bool:
-        "Method for validating uuid  v4"
-        try:
-            my_uuid = uuid.UUID(patient_id)
-            uuid_pattern = re.compile(r"^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]" +
-                                 "{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
-                                 re.IGNORECASE)
-            result = uuid_pattern.fullmatch(my_uuid.__str__())
-            if not result:
-                raise VaccineManagementException ("UUID invalid")
-        except ValueError as value_error:
-            raise VaccineManagementException ("Id received is not a UUID") from value_error
-        return True
-
-    @staticmethod
-    def validate_date_signature(signature: str)-> None:
+    def validate_date_signature(date_signature: str)-> None:
         """Method for validating sha256 values"""
         signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
-        result = signature_pattern.fullmatch(signature)
+        result = signature_pattern.fullmatch(date_signature)
         if not result:
             raise VaccineManagementException("date_signature format is not valid")
 
@@ -81,7 +66,7 @@ class VaccineManager:
             json.dump(data_list, file, indent=2)
 
     @staticmethod
-    def save_store_date(json_data: VaccinePatientRegister)-> None:
+    def save_store_date(date: VaccinationAppoinment)-> None:
         """Saves the appoinment into a file"""
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
@@ -95,7 +80,7 @@ class VaccineManager:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
 
         #append the date
-        data_list.append(json_data.__dict__)
+        data_list.append(date.__dict__)
 
         try:
             with open(file_store_date, "w", encoding="utf-8", newline="") as file:
@@ -112,12 +97,11 @@ class VaccineManager:
                                 age: str)-> str:
         """Register the patinent into the patients file"""
 
-        if self.validate_guid(patient_id):
-            my_patient = VaccinePatientRegister(patient_id,
-                                                name_surname,
-                                                registration_type,
-                                                phone_number,
-                                                age)
+        my_patient = VaccinePatientRegister(patient_id,
+                                            name_surname,
+                                            registration_type,
+                                            phone_number,
+                                            age)
 
         self.save_store(my_patient)
 
