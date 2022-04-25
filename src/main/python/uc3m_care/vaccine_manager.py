@@ -10,18 +10,12 @@ from .vaccine_patient_register import VaccinePatientRegister
 from .vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
 from .vaccine_manager_config import JSON_FILES_PATH
+from uc3m_care.data.attribute_sha256 import SHA256
+from uc3m_care.data.attribute_phone_number import PhoneNumber
 
 
 class VaccineManager():
     """Class for providing the methods for managing the vaccination process"""
-
-    @staticmethod
-    def validate_date_signature(date_signature: str) -> None:
-        """Method for validating sha256 values"""
-        signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
-        result = signature_pattern.fullmatch(date_signature)
-        if not result:
-            raise VaccineManagementException("date_signature format is not valid")
 
     # pylint: disable=too-many-arguments
     def request_vaccination_id(self, patient_id: str,
@@ -29,7 +23,6 @@ class VaccineManager():
                                registration_type: str,
                                phone_number: str,
                                age: str) -> str:
-        """Register the patient into the patients file"""
 
         my_patient = VaccinePatientRegister(patient_id,
                                             name_surname,
@@ -41,36 +34,19 @@ class VaccineManager():
 
         return my_patient.patient_sys_id
 
-    def validate_phone(self, phone_number):
-        phone_pattern = re.compile(r"^(\+)[0-9]{11}")
-        result = phone_pattern.fullmatch(phone_number)
-        if not result:
-            raise VaccineManagementException("phone number is not valid")
-
     def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
-        data = self.load_patient(input_file)
+        patient = JsonStore.load_patient(input_file)
 
-        guid = self.check_patient_data(data)
+        patient_guid = self.check_patient_data(patient)
 
-        my_sign = VaccinationAppoinment(guid, data["PatientSystemID"], data["ContactPhoneNumber"], 10)
+        my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
 
         # save the date in store_date.json
         JsonStore.store_vaccination_date(my_sign)
 
         return my_sign.date_signature
-
-    def load_patient(self, input_file: str):
-        try:
-            with open(input_file, "r", encoding="utf-8", newline="") as file:
-                data = json.load(file)
-        except FileNotFoundError as exception:
-            # file is not found
-            raise VaccineManagementException("File is not found") from exception
-        except json.JSONDecodeError as exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
-        return data
 
     def check_patient_data(self, patient_data):
         # check all the information
@@ -83,7 +59,7 @@ class VaccineManager():
             raise VaccineManagementException("Bad label patient_id") from exception
 
         try:
-            self.validate_phone(patient_data["ContactPhoneNumber"])
+            PhoneNumber(patient_data["ContactPhoneNumber"])
         except KeyError as exception:
             raise VaccineManagementException("Bad label contact phone") from exception
 
@@ -117,13 +93,14 @@ class VaccineManager():
     def vaccine_patient(self, date_signature):
         """Register the vaccination of the patient"""
 
-        self.validate_date_signature(date_signature)
+        #self.validate_date_signature(date_signature)
+        SHA256(date_signature)
 
-        date_time = JsonStore.search_date_appointment(date_signature)
+        vaccination_time = JsonStore.search_date_appointment(date_signature)
 
         today = datetime.today().date()
-        date_patient = datetime.fromtimestamp(date_time).date()
-        if date_patient != today:
+        vaccination_date = datetime.fromtimestamp(vaccination_time).date()
+        if vaccination_date != today:
             raise VaccineManagementException("Today is not the date")
 
         JsonStore.save_vaccinated(date_signature)

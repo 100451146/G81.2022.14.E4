@@ -66,7 +66,7 @@ class JsonStore:
             raise VaccineManagementException("Wrong file or file path") from exception
 
     @staticmethod
-    def save_vaccinated(date_signature):
+    def save_vaccinated(date_signature: str):
         file_store_vaccine = JSON_FILES_PATH + "store_vaccine.json"
         try:
             with open(file_store_vaccine, "r", encoding="utf-8", newline="") as file:
@@ -97,7 +97,7 @@ class JsonStore:
             json.dump(data_list, file, indent=2)
 
     @staticmethod
-    def search_date_appointment(date_signature):
+    def search_date_appointment(date_signature: str):
         # check if this date is in store_date
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
@@ -117,3 +117,15 @@ class JsonStore:
         if not found:
             raise VaccineManagementException("date_signature is not found")
         return date_time
+
+    @staticmethod
+    def load_patient(input_file: str):
+        try:
+            with open(input_file, "r", encoding="utf-8", newline="") as file:
+                data = json.load(file)
+        except FileNotFoundError as exception:
+            # file is not found
+            raise VaccineManagementException("File is not found") from exception
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
+        return data
