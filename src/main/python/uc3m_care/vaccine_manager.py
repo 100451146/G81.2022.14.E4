@@ -23,16 +23,6 @@ class VaccineManager():
         if not result:
             raise VaccineManagementException("date_signature format is not valid")
 
-    @staticmethod
-    def save_fast(json_data: VaccinePatientRegister) -> None:
-        """Method for saving the patients store"""
-        patients_store = JSON_FILES_PATH + "store_patient.json"
-        with open(patients_store, "r+", encoding="utf-8", newline="") as file:
-            data_list = json.load(file)
-            data_list.append(json_data.__dict__)
-            file.seek(0)
-            json.dump(data_list, file, indent=2)
-
     # pylint: disable=too-many-arguments
     def request_vaccination_id(self, patient_id: str,
                                name_surname: str,
@@ -47,7 +37,7 @@ class VaccineManager():
                                             phone_number,
                                             age)
 
-        JsonStore.save_store(my_patient)
+        JsonStore.save_patient_in_storage(my_patient)
 
         return my_patient.patient_sys_id
 
@@ -67,7 +57,7 @@ class VaccineManager():
         my_sign = VaccinationAppoinment(guid, data["PatientSystemID"], data["ContactPhoneNumber"], 10)
 
         # save the date in store_date.json
-        JsonStore.save_store_date(my_sign)
+        JsonStore.store_vaccination_date(my_sign)
 
         return my_sign.date_signature
 
@@ -153,23 +143,5 @@ class VaccineManager():
         if date_patient != today:
             raise VaccineManagementException("Today is not the date")
 
-        file_store_vaccine = JSON_FILES_PATH + "store_vaccine.json"
-
-        try:
-            with open(file_store_vaccine, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
-        except FileNotFoundError as ex:
-            # file is not found , so  init my data_list
-            data_list = []
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
-
-            # append the date
-        data_list.append(date_signature.__str__())
-        data_list.append(datetime.utcnow().__str__())
-        try:
-            with open(file_store_vaccine, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
-        except FileNotFoundError as ex:
-            raise VaccineManagementException("Wrong file or file path") from ex
+        JsonStore.save_vaccinated(date_signature)
         return True
