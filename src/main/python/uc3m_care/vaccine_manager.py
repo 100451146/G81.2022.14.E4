@@ -34,7 +34,7 @@ class VaccineManager(JsonStore):
 
     @staticmethod
     def save_store_date(date: VaccinationAppoinment)-> None:
-        """Saves the appoinment into a file"""
+        """Saves the appointment into a file"""
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
         try:
@@ -46,7 +46,7 @@ class VaccineManager(JsonStore):
         except json.JSONDecodeError as exception:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
 
-        #append the date
+        # append the date
         data_list.append(date.__dict__)
 
         try:
@@ -62,7 +62,7 @@ class VaccineManager(JsonStore):
                                 registration_type: str,
                                 phone_number: str,
                                 age: str)-> str:
-        """Register the patinent into the patients file"""
+        """Register the patient into the patients file"""
 
         my_patient = VaccinePatientRegister(patient_id,
                                             name_surname,
@@ -81,7 +81,7 @@ class VaccineManager(JsonStore):
             raise VaccineManagementException("phone number is not valid")
 
     def get_vaccine_date (self, input_file):
-        """Gets an appoinment for a registered patient"""
+        """Gets an appointment for a registered patient"""
 
         data = self.find_patient(input_file)
 
@@ -89,7 +89,7 @@ class VaccineManager(JsonStore):
 
         my_sign = VaccinationAppoinment(guid, data["PatientSystemID"], data["ContactPhoneNumber"],10)
 
-        #save the date in store_date.json
+        # save the date in store_date.json
 
         self.save_store_date(my_sign)
 
@@ -153,7 +153,7 @@ class VaccineManager(JsonStore):
 
         self.validate_date_signature(date_signature)
 
-        #check if this date is in store_date
+        # check if this date is in store_date
         file_store_date = JSON_FILES_PATH + "store_date.json"
         # first read the file
         try:
@@ -163,7 +163,7 @@ class VaccineManager(JsonStore):
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
         except FileNotFoundError as ex:
             raise VaccineManagementException("Store_date not found") from ex
-        #search this date_signature
+        # search this date_signature
         found = False
         for item in data_list:
             if item["_VaccinationAppoinment__date_signature"] == date_signature:

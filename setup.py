@@ -18,7 +18,7 @@
 #   limitations under the License.
 
 #
-# This script allows to support installation via:
+# This script allows supporting installation via:
 #   pip install git+git://<project>@<branch>
 #
 # This script is designed to be used in combination with `pip install` ONLY

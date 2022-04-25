@@ -8,9 +8,9 @@ from uc3m_care.vaccine_management_exception import VaccineManagementException
 class JsonStore:
     @staticmethod
     def save_store(json_data: VaccinePatientRegister)-> True:
-        """Medthod for savint the patients store"""
+        """Method for saving the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
-        #first read the file
+        # first read the file
         try:
             with open(file_store, "r", encoding="utf-8", newline="") as file:
                 data_list = json.load(file)
