@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from uc3m_care import VaccinePatientRegister
+from uc3m_care import VaccinePatientRegister#, JSON_FILES_PATH, VaccineManagementException
 from uc3m_care.vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.vaccine_management_exception import VaccineManagementException
@@ -95,3 +95,25 @@ class JsonStore:
             data_list.append(json_data.__dict__)
             file.seek(0)
             json.dump(data_list, file, indent=2)
+
+    @staticmethod
+    def search_date_appointment(date_signature):
+        # check if this date is in store_date
+        file_store_date = JSON_FILES_PATH + "store_date.json"
+        # first read the file
+        try:
+            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Store_date not found") from ex
+        # search this date_signature
+        found = False
+        for item in data_list:
+            if item["_VaccinationAppoinment__date_signature"] == date_signature:
+                found = True
+                date_time = item["_VaccinationAppoinment__appoinment_date"]
+        if not found:
+            raise VaccineManagementException("date_signature is not found")
+        return date_time

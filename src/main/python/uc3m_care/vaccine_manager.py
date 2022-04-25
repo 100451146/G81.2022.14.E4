@@ -50,7 +50,7 @@ class VaccineManager():
     def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
-        data = self.find_patient(input_file)
+        data = self.load_patient(input_file)
 
         guid = self.check_patient_data(data)
 
@@ -61,7 +61,7 @@ class VaccineManager():
 
         return my_sign.date_signature
 
-    def find_patient(self, input_file: str):
+    def load_patient(self, input_file: str):
         try:
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 data = json.load(file)
@@ -119,24 +119,7 @@ class VaccineManager():
 
         self.validate_date_signature(date_signature)
 
-        # check if this date is in store_date
-        file_store_date = JSON_FILES_PATH + "store_date.json"
-        # first read the file
-        try:
-            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
-        except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
-        except FileNotFoundError as ex:
-            raise VaccineManagementException("Store_date not found") from ex
-        # search this date_signature
-        found = False
-        for item in data_list:
-            if item["_VaccinationAppoinment__date_signature"] == date_signature:
-                found = True
-                date_time = item["_VaccinationAppoinment__appoinment_date"]
-        if not found:
-            raise VaccineManagementException("date_signature is not found")
+        date_time = JsonStore.search_date_appointment(date_signature)
 
         today = datetime.today().date()
         date_patient = datetime.fromtimestamp(date_time).date()
