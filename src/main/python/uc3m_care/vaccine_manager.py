@@ -11,6 +11,7 @@ from .vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
 from .vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.data.attribute_sha256 import SHA256
+from uc3m_care.data.md5 import MD5
 from uc3m_care.data.attribute_phone_number import PhoneNumber
 
 
@@ -39,6 +40,24 @@ class VaccineManager():
 
         patient = JsonStore.load_patient(input_file)
 
+        try:
+            MD5(patient["PatientSystemID"])
+        except KeyError as exception:
+            raise VaccineManagementException("Bad label patient_id") from exception
+
+        try:
+            PhoneNumber(patient["ContactPhoneNumber"])
+        except KeyError as exception:
+            raise VaccineManagementException("Bad label contact phone") from exception
+
+        try:
+            patient_found = JsonStore.search_patient(patient)
+        except KeyError as exception:
+            raise VaccineManagementException("Patient's data have been manipulated") from exception
+
+        #if patient_found is None:
+        #    raise VaccineManagementException("patient_sys_id not found")
+
         patient_guid = self.check_patient_data(patient)
 
         my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
@@ -49,19 +68,6 @@ class VaccineManager():
         return my_sign.date_signature
 
     def check_patient_data(self, patient_data):
-        # check all the information
-        try:
-            sys_id_pattern = re.compile(r"[0-9a-fA-F]{32}$")
-            result = sys_id_pattern.fullmatch(patient_data["PatientSystemID"])
-            if not result:
-                raise VaccineManagementException("patient system id is not valid")
-        except KeyError as exception:
-            raise VaccineManagementException("Bad label patient_id") from exception
-
-        try:
-            PhoneNumber(patient_data["ContactPhoneNumber"])
-        except KeyError as exception:
-            raise VaccineManagementException("Bad label contact phone") from exception
 
         file_store = JSON_FILES_PATH + "store_patient.json"
         with open(file_store, "r", encoding="utf-8", newline="") as file:
@@ -98,9 +104,7 @@ class VaccineManager():
 
         vaccination_time = JsonStore.search_date_appointment(date_signature)
 
-        today = datetime.today().date()
-        vaccination_date = datetime.fromtimestamp(vaccination_time).date()
-        if vaccination_date != today:
+        if datetime.fromtimestamp(vaccination_time).date() != datetime.today().date():
             raise VaccineManagementException("Today is not the date")
 
         JsonStore.save_vaccinated(date_signature)

@@ -129,3 +129,18 @@ class JsonStore:
         except json.JSONDecodeError as exception:
             raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
         return data
+
+    @classmethod
+    def search_patient(cls, patient):
+        """Method for searching the patient in the store"""
+        patients_store = JSON_FILES_PATH + "store_patient.json"
+        with open(patients_store, "r", encoding="utf-8", newline="") as file:
+            patient_list = json.load(file)
+        # search this patient
+        found = False
+        for item in patient_list:
+            if item["_VaccinePatientRegister__patient_sys_id"] == patient["_VaccinePatientRegister__patient_sys_id"]:
+                found = True
+                return found
+        if not found:
+            raise VaccineManagementException("patient_system_id is not found")
