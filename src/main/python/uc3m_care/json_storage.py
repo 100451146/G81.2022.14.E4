@@ -1,6 +1,7 @@
 import json
 
 from uc3m_care import VaccinePatientRegister
+from uc3m_care.vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.vaccine_management_exception import VaccineManagementException
 
@@ -39,3 +40,26 @@ class JsonStore:
         if key_found is True:
             raise VaccineManagementException("patien_id is registered in store_patient")
         return True
+
+    @staticmethod
+    def save_store_date(date: VaccinationAppoinment) -> None:
+        """Saves the appointment into a file"""
+        file_store_date = JSON_FILES_PATH + "store_date.json"
+        # first read the file
+        try:
+            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
+        except FileNotFoundError:
+            # file is not found , so  init my data_list
+            data_list = []
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
+
+        # append the date
+        data_list.append(date.__dict__)
+
+        try:
+            with open(file_store_date, "w", encoding="utf-8", newline="") as file:
+                json.dump(data_list, file, indent=2)
+        except FileNotFoundError as exception:
+            raise VaccineManagementException("Wrong file or file path") from exception

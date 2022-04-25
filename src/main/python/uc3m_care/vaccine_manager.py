@@ -5,17 +5,18 @@ import json
 from datetime import datetime
 from freezegun import freeze_time
 
-from .json_store import JsonStore
+from .json_storage import JsonStore
 from .vaccine_patient_register import VaccinePatientRegister
 from .vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
 from .vaccine_manager_config import JSON_FILES_PATH
 
-class VaccineManager(JsonStore):
+
+class VaccineManager():
     """Class for providing the methods for managing the vaccination process"""
 
     @staticmethod
-    def validate_date_signature(date_signature: str)-> None:
+    def validate_date_signature(date_signature: str) -> None:
         """Method for validating sha256 values"""
         signature_pattern = re.compile(r"[0-9a-fA-F]{64}$")
         result = signature_pattern.fullmatch(date_signature)
@@ -23,7 +24,7 @@ class VaccineManager(JsonStore):
             raise VaccineManagementException("date_signature format is not valid")
 
     @staticmethod
-    def save_fast(json_data: VaccinePatientRegister)-> None:
+    def save_fast(json_data: VaccinePatientRegister) -> None:
         """Method for saving the patients store"""
         patients_store = JSON_FILES_PATH + "store_patient.json"
         with open(patients_store, "r+", encoding="utf-8", newline="") as file:
@@ -32,36 +33,12 @@ class VaccineManager(JsonStore):
             file.seek(0)
             json.dump(data_list, file, indent=2)
 
-    @staticmethod
-    def save_store_date(date: VaccinationAppoinment)-> None:
-        """Saves the appointment into a file"""
-        file_store_date = JSON_FILES_PATH + "store_date.json"
-        # first read the file
-        try:
-            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
-        except FileNotFoundError:
-            # file is not found , so  init my data_list
-            data_list = []
-        except json.JSONDecodeError as exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
-
-        # append the date
-        data_list.append(date.__dict__)
-
-        try:
-            with open(file_store_date, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
-        except FileNotFoundError as exception:
-            raise VaccineManagementException("Wrong file or file path") from exception
-
-
-    #pylint: disable=too-many-arguments
-    def request_vaccination_id (self, patient_id: str,
-                                name_surname: str,
-                                registration_type: str,
-                                phone_number: str,
-                                age: str)-> str:
+    # pylint: disable=too-many-arguments
+    def request_vaccination_id(self, patient_id: str,
+                               name_surname: str,
+                               registration_type: str,
+                               phone_number: str,
+                               age: str) -> str:
         """Register the patient into the patients file"""
 
         my_patient = VaccinePatientRegister(patient_id,
@@ -70,7 +47,7 @@ class VaccineManager(JsonStore):
                                             phone_number,
                                             age)
 
-        self.save_store(my_patient)
+        JsonStore.save_store(my_patient)
 
         return my_patient.patient_sys_id
 
@@ -80,18 +57,17 @@ class VaccineManager(JsonStore):
         if not result:
             raise VaccineManagementException("phone number is not valid")
 
-    def get_vaccine_date (self, input_file):
+    def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
         data = self.find_patient(input_file)
 
         guid = self.check_patient_data(data)
 
-        my_sign = VaccinationAppoinment(guid, data["PatientSystemID"], data["ContactPhoneNumber"],10)
+        my_sign = VaccinationAppoinment(guid, data["PatientSystemID"], data["ContactPhoneNumber"], 10)
 
         # save the date in store_date.json
-
-        self.save_store_date(my_sign)
+        JsonStore.save_store_date(my_sign)
 
         return my_sign.date_signature
 
@@ -172,8 +148,8 @@ class VaccineManager(JsonStore):
         if not found:
             raise VaccineManagementException("date_signature is not found")
 
-        today= datetime.today().date()
-        date_patient= datetime.fromtimestamp(date_time).date()
+        today = datetime.today().date()
+        date_patient = datetime.fromtimestamp(date_time).date()
         if date_patient != today:
             raise VaccineManagementException("Today is not the date")
 
