@@ -1,6 +1,6 @@
 import uuid
 from .attribute import Attribute
-from uc3m_care.vaccine_management_exception import VaccineManagementException
+from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 
 class Uuid(Attribute):

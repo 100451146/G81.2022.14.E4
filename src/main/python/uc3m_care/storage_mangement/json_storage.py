@@ -1,15 +1,15 @@
 import datetime
 import json
 
-from uc3m_care import VaccinePatientRegister#, JSON_FILES_PATH, VaccineManagementException
+from uc3m_care import VaccinePatientRegister
 from uc3m_care.vaccination_appoinment import VaccinationAppoinment
-from uc3m_care.vaccine_manager_config import JSON_FILES_PATH
-from uc3m_care.vaccine_management_exception import VaccineManagementException
+from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
+from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 
 class JsonStore:
     @staticmethod
-    def save_patient_in_storage(json_data: VaccinePatientRegister)-> True:
+    def save_patient_in_storage(json_data: VaccinePatientRegister) -> True:
         """Method for saving the patients store"""
         file_store = JSON_FILES_PATH + "store_patient.json"
         # first read the file
@@ -97,6 +97,36 @@ class JsonStore:
             json.dump(data_list, file, indent=2)
 
     @staticmethod
+    def load_patient(input_file: str):
+        try:
+            with open(input_file, "r", encoding="utf-8", newline="") as file:
+                data = json.load(file)
+        except FileNotFoundError as exception:
+            # file is not found
+            raise VaccineManagementException("File is not found") from exception
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
+        return data
+
+    @staticmethod
+    def search_patient(patient: dict) -> dict:
+        """Method for searching the patient in the store"""
+        patients_store = JSON_FILES_PATH + "store_patient.json"
+        try:
+            with open(patients_store, "r", encoding="utf-8", newline="") as file:
+                patient_list = json.load(file)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Store_patient not found") from ex
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
+        # search this patient
+        for item in patient_list:
+            if item["_VaccinePatientRegister__patient_sys_id"] == patient["PatientSystemID"]:
+                return item
+        raise VaccineManagementException("patient_system_id is not found")
+
+    @staticmethod
     def search_date_appointment(date_signature: str):
         # check if this date is in store_date
         file_store_date = JSON_FILES_PATH + "store_date.json"
@@ -118,29 +148,4 @@ class JsonStore:
             raise VaccineManagementException("date_signature is not found")
         return date_time
 
-    @staticmethod
-    def load_patient(input_file: str):
-        try:
-            with open(input_file, "r", encoding="utf-8", newline="") as file:
-                data = json.load(file)
-        except FileNotFoundError as exception:
-            # file is not found
-            raise VaccineManagementException("File is not found") from exception
-        except json.JSONDecodeError as exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
-        return data
 
-    @classmethod
-    def search_patient(cls, patient):
-        """Method for searching the patient in the store"""
-        patients_store = JSON_FILES_PATH + "store_patient.json"
-        with open(patients_store, "r", encoding="utf-8", newline="") as file:
-            patient_list = json.load(file)
-        # search this patient
-        found = False
-        for item in patient_list:
-            if item["_VaccinePatientRegister__patient_sys_id"] == patient["_VaccinePatientRegister__patient_sys_id"]:
-                found = True
-                return found
-        if not found:
-            raise VaccineManagementException("patient_system_id is not found")

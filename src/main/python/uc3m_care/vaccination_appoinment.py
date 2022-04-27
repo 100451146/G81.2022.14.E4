@@ -1,17 +1,20 @@
 """Contains the class Vaccination Appoinment"""
 from datetime import datetime
+from uc3m_care.data.md5 import MD5
+from uc3m_care.data.attribute_uuid import Uuid
+from uc3m_care.data.attribute_phone_number import PhoneNumber
 import hashlib
 
-#pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class VaccinationAppoinment():
     """Class representing an appoinment  for the vaccination of a patient"""
 
     def __init__( self, guid, patient_sys_id, patient_phone_number, days ):
         self.__alg = "SHA-256"
         self.__type = "DS"
-        self.__patient_id = guid
-        self.__patient_sys_id = patient_sys_id
-        self.__phone_number = patient_phone_number
+        self.__patient_id = Uuid(guid).value
+        self.__patient_sys_id = MD5(patient_sys_id).value
+        self.__phone_number = PhoneNumber(patient_phone_number).value
         justnow = datetime.utcnow()
         self.__issued_at = datetime.timestamp(justnow)
         if days == 0:
@@ -36,7 +39,7 @@ class VaccinationAppoinment():
 
     @patient_id.setter
     def patient_id( self, value ):
-        self.__patient_id = value
+        self.__patient_id = Uuid(value).value
 
     @property
     def patient_sys_id(self):
@@ -44,7 +47,7 @@ class VaccinationAppoinment():
         return self.__patient_sys_id
     @patient_sys_id.setter
     def patient_sys_id(self, value):
-        self.__patient_sys_id = value
+        self.__patient_sys_id = MD5(value).value
 
     @property
     def phone_number( self ):
@@ -53,7 +56,7 @@ class VaccinationAppoinment():
 
     @phone_number.setter
     def phone_number( self, value ):
-        self.__phone_number = value
+        self.__phone_number = PhoneNumber(value).value
 
     @property
     def vaccination_signature( self ):

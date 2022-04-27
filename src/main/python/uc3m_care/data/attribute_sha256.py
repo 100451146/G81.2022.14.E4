@@ -1,6 +1,4 @@
-import uuid
 from .attribute import Attribute
-from uc3m_care.vaccine_management_exception import VaccineManagementException
 
 
 class SHA256(Attribute):
