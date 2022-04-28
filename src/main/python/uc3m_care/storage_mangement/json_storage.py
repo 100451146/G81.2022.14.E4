@@ -37,14 +37,14 @@ class JsonStore:
         JsonStore.append_json_data(data_list, VACCINES_STORE)
 
     @staticmethod
-    def load_from_json(input_file: str, is_registry=False, is_patient=False, is_appointment=False):
+    def load_from_json(input_file: str, is_registry=False, is_patient_file=False, is_appointment=False):
         try:
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 data_list = json.load(file)
         except FileNotFoundError as exception:
-            if is_registry is True:
+            if is_registry:
                 raise VaccineManagementException("Store_patient not found") from exception
-            if is_patient:
+            if is_patient_file:
                 raise VaccineManagementException("File is not found") from exception
             if is_appointment:
                 raise VaccineManagementException("Store_date not found") from exception

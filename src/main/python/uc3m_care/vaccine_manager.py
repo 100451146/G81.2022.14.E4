@@ -35,7 +35,7 @@ class VaccineManager():
     def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
-        patient = JsonStore.load_from_json(input_file, False)
+        patient = JsonStore.load_from_json(input_file, is_patient_file=True)
 
         self.validate_system_id(patient)
         self.validate_phone(patient)
