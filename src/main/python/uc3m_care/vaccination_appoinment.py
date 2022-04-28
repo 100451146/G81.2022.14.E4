@@ -38,7 +38,7 @@ class VaccinationAppoinment():
         return self.__patient_id
 
     @patient_id.setter
-    def patient_id( self, value ):
+    def patient_id(self, value):
         self.__patient_id = Uuid(value).value
 
     @property
@@ -50,7 +50,7 @@ class VaccinationAppoinment():
         self.__patient_sys_id = MD5(value).value
 
     @property
-    def phone_number( self ):
+    def phone_number(self):
         """Property that represents the phone number of the patient"""
         return self.__phone_number
 
@@ -73,7 +73,7 @@ class VaccinationAppoinment():
         self.__issued_at = value
 
     @property
-    def appoinment_date( self ):
+    def appoinment_date(self):
         """Returns the vaccination date"""
         return self.__appoinment_date
 

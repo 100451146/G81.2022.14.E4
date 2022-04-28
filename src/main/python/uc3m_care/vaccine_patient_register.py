@@ -11,7 +11,7 @@ from uc3m_care.data.attribute_phone_number import PhoneNumber
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
     #pylint: disable=too-many-arguments
-    def __init__( self, patient_id, full_name, registration_type, phone_number, age):
+    def __init__(self, patient_id, full_name, registration_type, phone_number, age):
         self.__patient_id = Uuid(patient_id).value
         self.__full_name = FullName(full_name).value
         self.__registration_type = RegistrationType(registration_type).value
@@ -26,26 +26,26 @@ class VaccinePatientRegister:
         return "VaccinePatientRegister:" + json.dumps(self.__dict__)
 
     @property
-    def full_name( self ):
+    def full_name(self):
         """Property representing the name and the surname of
         the person who request the registration"""
         return self.__full_name
 
     @full_name.setter
-    def full_name( self, value ):
+    def full_name(self, value):
         self.__full_name = FullName(value).value
 
     @property
-    def vaccine_type( self ):
+    def vaccine_type(self):
         """Property representing the type vaccine"""
         return self.__registration_type
 
     @vaccine_type.setter
-    def vaccine_type( self, value ):
+    def vaccine_type(self, value):
         self.__registration_type = RegistrationType(value).value
 
     @property
-    def phone_number( self ):
+    def phone_number(self):
         """Property representing the requester's phone number"""
         return self.__phone_number
 
@@ -54,7 +54,7 @@ class VaccinePatientRegister:
         self.__phone_number = PhoneNumber(value).value
 
     @property
-    def patient_id( self ):
+    def patient_id(self):
         """Property representing the requester's UUID"""
         return self.__patient_id
 
@@ -68,12 +68,12 @@ class VaccinePatientRegister:
         return self.__time_stamp
 
     @property
-    def patient_system_id( self ):
+    def patient_system_id(self):
         """Returns the md5 signature"""
         return self.__patient_sys_id
 
     @property
-    def patient_age( self ):
+    def patient_age(self):
         """Returns the patient's age"""
         return self.__age
 
