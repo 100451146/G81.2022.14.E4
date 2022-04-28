@@ -35,7 +35,7 @@ class VaccineManager():
     def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
-        patient = JsonStore.load_patient(input_file)
+        patient = JsonStore.load_from_json(input_file, False)
 
         self.validate_system_id(patient)
         self.validate_phone(patient)
@@ -48,7 +48,7 @@ class VaccineManager():
         patient_guid = self.check_patient_data(patient, patient_found)
         my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
         # save the date in store_date.json
-        JsonStore.save_vaccination_date(my_sign)
+        JsonStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
 
     def validate_phone(self, patient):
