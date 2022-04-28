@@ -48,7 +48,7 @@ class VaccineManager():
         patient_guid = self.check_patient_data(patient, patient_found)
         my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
         # save the date in store_date.json
-        JsonStore.store_vaccination_date(my_sign)
+        JsonStore.save_vaccination_date(my_sign)
         return my_sign.date_signature
 
     def validate_phone(self, patient):
