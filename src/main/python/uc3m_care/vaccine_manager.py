@@ -37,8 +37,8 @@ class VaccineManager():
 
         patient = JsonStore.load_from_json(input_file, is_patient_file=True)
 
-        self.validate_system_id(patient)
-        self.validate_phone(patient)
+        self.validate_system_id_label(patient)
+        self.validate_phone_label(patient)
 
         try:
             patient_found = JsonStore.search_patient(patient)
@@ -51,13 +51,26 @@ class VaccineManager():
         JsonStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
 
-    def validate_phone(self, patient):
+    def vaccine_patient(self, date_signature):
+        """Register the vaccination of the patient"""
+
+        SHA256(date_signature)
+
+        vaccination_time = JsonStore.search_date_appointment(date_signature)
+
+        if datetime.fromtimestamp(vaccination_time).date() != datetime.today().date():
+            raise VaccineManagementException("Today is not the date")
+
+        JsonStore.save_vaccinated(date_signature)
+        return True
+
+    def validate_phone_label(self, patient):
         try:
             PhoneNumber(patient["ContactPhoneNumber"])
         except KeyError as exception:
             raise VaccineManagementException("Bad label contact phone") from exception
 
-    def validate_system_id(self, patient):
+    def validate_system_id_label(self, patient):
         try:
             MD5(patient["PatientSystemID"])
         except KeyError as exception:
@@ -79,15 +92,4 @@ class VaccineManager():
             raise VaccineManagementException("Patient's data have been manipulated")
         return guid
 
-    def vaccine_patient(self, date_signature):
-        """Register the vaccination of the patient"""
 
-        SHA256(date_signature)
-
-        vaccination_time = JsonStore.search_date_appointment(date_signature)
-
-        if datetime.fromtimestamp(vaccination_time).date() != datetime.today().date():
-            raise VaccineManagementException("Today is not the date")
-
-        JsonStore.save_vaccinated(date_signature)
-        return True
