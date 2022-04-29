@@ -3,7 +3,7 @@ import hashlib
 import json
 from datetime import datetime
 from uc3m_care.data.attribute_registration_type import RegistrationType
-from uc3m_care.data.attribute_uuid import Uuid
+from uc3m_care.data.hash_guid4 import Uuid
 from uc3m_care.data.attribute_full_name import FullName
 from uc3m_care.data.attribute_age import Age
 from uc3m_care.data.attribute_phone_number import PhoneNumber

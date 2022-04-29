@@ -7,8 +7,8 @@ from uc3m_care.storage_mangement.json_storage import JsonStore
 from .vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
-from uc3m_care.data.attribute_sha256 import SHA256
-from uc3m_care.data.md5 import MD5
+from uc3m_care.data.hash_sha256 import SHA256
+from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.data.attribute_phone_number import PhoneNumber
 
 

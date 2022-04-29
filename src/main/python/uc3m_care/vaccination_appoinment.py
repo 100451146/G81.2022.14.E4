@@ -1,7 +1,7 @@
 """Contains the class Vaccination Appoinment"""
 from datetime import datetime
-from uc3m_care.data.md5 import MD5
-from uc3m_care.data.attribute_uuid import Uuid
+from uc3m_care.data.hash_md5 import MD5
+from uc3m_care.data.hash_guid4 import Uuid
 from uc3m_care.data.attribute_phone_number import PhoneNumber
 import hashlib
 
