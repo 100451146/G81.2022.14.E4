@@ -40,16 +40,20 @@ class VaccineManager():
         self.validate_system_id_label(patient)
         self.validate_phone_label(patient)
 
-        try:
-            patient_found = JsonStore.search_patient(patient)
-        except KeyError as exception:
-            raise VaccineManagementException("Patient's data have been manipulated") from exception
+        patient_found = JsonStore.found_patient_on_store(patient)
 
         patient_guid = self.check_patient_data(patient, patient_found)
         my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
         # save the date in store_date.json
         JsonStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
+
+    def found_patient(self, patient):
+        try:
+            patient_found = JsonStore.search_patient(patient)
+        except KeyError as exception:
+            raise VaccineManagementException("Patient's data have been manipulated") from exception
+        return patient_found
 
     def vaccine_patient(self, date_signature):
         """Register the vaccination of the patient"""

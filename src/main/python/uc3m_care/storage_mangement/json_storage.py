@@ -98,3 +98,11 @@ class JsonStore:
             data_list.append(json_data.__dict__)
         elif key_found is True:
             raise VaccineManagementException("patien_id is registered in store_patient")
+
+    @staticmethod
+    def found_patient_on_store(patient):
+        try:
+            patient_found = JsonStore.search_patient(patient)
+        except KeyError as exception:
+            raise VaccineManagementException("Patient's data have been manipulated") from exception
+        return patient_found
