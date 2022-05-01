@@ -49,22 +49,12 @@ class VaccineManager():
         JsonStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
 
-    def found_patient(self, patient):
-        try:
-            patient_found = JsonStore.search_patient(patient)
-        except KeyError as exception:
-            raise VaccineManagementException("Patient's data have been manipulated") from exception
-        return patient_found
-
-    def vaccine_patient(self, date_signature):
+    def vaccine_patient(self, date_signature: str)-> True:
         """Register the vaccination of the patient"""
 
         SHA256(date_signature)
-
         vaccination_time = JsonStore.search_date_appointment(date_signature)
-
         Date(vaccination_time)
-
         JsonStore.save_vaccinated(date_signature)
 
         return True

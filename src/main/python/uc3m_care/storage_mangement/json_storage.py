@@ -29,7 +29,7 @@ class JsonStore:
         JsonStore.append_json_data(data_list, APPOINTMENTS_STORE)
 
     @staticmethod
-    def save_vaccinated(date_signature: str):
+    def save_vaccinated(date_signature: str)-> None:
         data_list = JsonStore.load_from_json(VACCINES_STORE, False)
         # append the date
         data_list.extend({date_signature.__str__(), datetime.datetime.utcnow().__str__()})
@@ -37,7 +37,7 @@ class JsonStore:
         JsonStore.append_json_data(data_list, VACCINES_STORE)
 
     @staticmethod
-    def load_from_json(input_file: str, is_registry=False, is_patient_file=False, is_appointment=False):
+    def load_from_json(input_file: str, is_registry=False, is_patient_file=False, is_appointment=False)-> dict:
         try:
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 data_list = json.load(file)
@@ -72,7 +72,7 @@ class JsonStore:
         raise VaccineManagementException("patient_system_id is not found")
 
     @staticmethod
-    def search_date_appointment(date_signature: str):
+    def search_date_appointment(date_signature: str)-> str:
         # check if this date is in store_date
         # first read the file
         appointments_list = JsonStore.load_from_json(APPOINTMENTS_STORE, is_appointment=True)
@@ -87,7 +87,7 @@ class JsonStore:
         return date_time
 
     @staticmethod
-    def check_patient_duplicated(data_list, json_data):
+    def check_patient_duplicated(data_list: dict, json_data: dict)-> None:
         key_found = False
         for item in data_list:
             if item["_VaccinePatientRegister__patient_id"] == json_data.patient_id:
@@ -100,7 +100,7 @@ class JsonStore:
             raise VaccineManagementException("patien_id is registered in store_patient")
 
     @staticmethod
-    def found_patient_on_store(patient):
+    def found_patient_on_store(patient: str)-> str:
         try:
             patient_found = JsonStore.search_patient(patient)
         except KeyError as exception:

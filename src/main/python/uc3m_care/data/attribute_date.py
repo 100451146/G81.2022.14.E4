@@ -3,7 +3,7 @@ from datetime import datetime
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 class Date(Attribute):
-    def __init__(self, date):
+    def __init__(self, date: int)-> None:
         self._validation_pattern = None
         self._error_message = "Today is not the date"
         self._attr_value = self._validate(date)

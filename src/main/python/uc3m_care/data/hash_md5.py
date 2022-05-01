@@ -2,7 +2,7 @@ from .attribute import Attribute
 
 
 class MD5(Attribute):
-    def __init__(self, md5):
+    def __init__(self, md5: str)-> None:
         """Method for validating sha256 values"""
         self._validation_pattern = r"[0-9a-fA-F]{32}$"
         self._error_message = "patient system id is not valid"

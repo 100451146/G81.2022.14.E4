@@ -1,7 +1,7 @@
 from .attribute import Attribute
 
 class SHA256(Attribute):
-    def __init__(self, sha256):
+    def __init__(self, sha256: str)-> None:
         """Method for validating sha256 values"""
         self._validation_pattern = r"[0-9a-fA-F]{64}$"
         self._error_message = "date_signature format is not valid"
