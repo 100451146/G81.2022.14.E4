@@ -5,9 +5,8 @@ from uc3m_care import VaccinePatientRegister
 from uc3m_care.vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.cfg.vaccine_manager_config import PATIENTS_STORE, APPOINTMENTS_STORE, VACCINES_STORE
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-
-
 class JsonStore:
+
     @staticmethod
     def save_patient_in_storage(json_data: VaccinePatientRegister) -> True:
         """Method for saving the patients store"""
@@ -63,36 +62,45 @@ class JsonStore:
 
     @staticmethod
     def search_patient(patient: dict) -> dict:
+        KEY_LABEL_VACC_PATIENT_SYS_ID = "_VaccinePatientRegister__patient_sys_id"
+        KEY_LABEL_PATIENT_SYS_ID = "PatientSystemID"
+
         """Method for searching the patient in the store"""
         patient_list = JsonStore.load_from_json(PATIENTS_STORE, is_registry=True)
         # search this patient
         for item in patient_list:
-            if item["_VaccinePatientRegister__patient_sys_id"] == patient["PatientSystemID"]:
+            if item[KEY_LABEL_VACC_PATIENT_SYS_ID] == patient[KEY_LABEL_PATIENT_SYS_ID]:
                 return item
         raise VaccineManagementException("patient_system_id is not found")
 
     @staticmethod
     def search_date_appointment(date_signature: str)-> str:
+        KEY_LABEL_DATE_SIGNATURE = "_VaccinationAppoinment__date_signature"
+        KEY_LABEL_DATE_APPOINTMENT_DATE = "_VaccinationAppoinment__appoinment_date"
         # check if this date is in store_date
         # first read the file
         appointments_list = JsonStore.load_from_json(APPOINTMENTS_STORE, is_appointment=True)
         # search this date_signature
         found = False
         for item in appointments_list:
-            if item["_VaccinationAppoinment__date_signature"] == date_signature:
+            if item[KEY_LABEL_DATE_SIGNATURE] == date_signature:
                 found = True
-                date_time = item["_VaccinationAppoinment__appoinment_date"]
+                date_time = item[KEY_LABEL_DATE_APPOINTMENT_DATE]
         if not found:
             raise VaccineManagementException("date_signature is not found")
         return date_time
 
     @staticmethod
     def check_patient_duplicated(data_list: dict, json_data: dict)-> None:
+        KEY_LABEL_VACCINE_PATIENT_ID = "_VaccinePatientRegister__patient_id"
+        KEY_LABEL_VACCINE_REG_TYPE = "_VaccinePatientRegister__registration_type"
+        KEY_LABEL_VACCINE_NAME = "_VaccinePatientRegister__full_name"
+
         key_found = False
         for item in data_list:
-            if item["_VaccinePatientRegister__patient_id"] == json_data.patient_id:
-                if (item["_VaccinePatientRegister__registration_type"] == json_data.vaccine_type) and \
-                        (item["_VaccinePatientRegister__full_name"] == json_data.full_name):
+            if item[KEY_LABEL_VACCINE_PATIENT_ID] == json_data.patient_id:
+                if (item[KEY_LABEL_VACCINE_REG_TYPE] == json_data.vaccine_type) and \
+                        (item[KEY_LABEL_VACCINE_NAME] == json_data.full_name):
                     key_found = True
         if key_found is False:
             data_list.append(json_data.__dict__)
