@@ -7,6 +7,7 @@ from uc3m_care.storage_mangement.json_storage import JsonStore
 from .vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
+from uc3m_care.data.attribute_date import Date
 from uc3m_care.data.hash_sha256 import SHA256
 from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.data.attribute_phone_number import PhoneNumber
@@ -62,10 +63,10 @@ class VaccineManager():
 
         vaccination_time = JsonStore.search_date_appointment(date_signature)
 
-        if datetime.fromtimestamp(vaccination_time).date() != datetime.today().date():
-            raise VaccineManagementException("Today is not the date")
+        Date(vaccination_time)
 
         JsonStore.save_vaccinated(date_signature)
+
         return True
 
     def validate_phone_label(self, patient):
@@ -95,5 +96,3 @@ class VaccineManager():
         if patient.patient_system_id != patient_from_input["PatientSystemID"]:
             raise VaccineManagementException("Patient's data have been manipulated")
         return guid
-
-

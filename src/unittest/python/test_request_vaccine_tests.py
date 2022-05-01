@@ -7,6 +7,7 @@ from freezegun import freeze_time
 from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH
+from uc3m_care.storage_mangement.json_storage import JsonStore
 
 #"""
 #      import uuid

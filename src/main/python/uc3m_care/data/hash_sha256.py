@@ -1,6 +1,5 @@
 from .attribute import Attribute
 
-
 class SHA256(Attribute):
     def __init__(self, attr_value):
         """Method for validating sha256 values"""

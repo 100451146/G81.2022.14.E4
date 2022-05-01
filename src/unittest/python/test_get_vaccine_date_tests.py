@@ -8,6 +8,7 @@ from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH
 from uc3m_care import JSON_FILES_RF2_PATH
+from uc3m_care.storage_mangement.json_storage import JsonStore
 
 
 param_list_nok = [("test_dup_all.json","JSON Decode Error - Wrong JSON Format"),
