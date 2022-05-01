@@ -11,6 +11,7 @@ from uc3m_care.data.attribute_date import Date
 from uc3m_care.data.hash_sha256 import SHA256
 from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.data.attribute_phone_number import PhoneNumber
+from uc3m_care.enum.enumerations import Dict_Data
 
 
 class VaccineManager():
@@ -44,7 +45,8 @@ class VaccineManager():
         patient_found = JsonStore.found_patient_on_store(patient)
 
         patient_guid = self.check_patient_data(patient, patient_found)
-        my_sign = VaccinationAppoinment(patient_guid, patient["PatientSystemID"], patient["ContactPhoneNumber"], 10)
+        my_sign = VaccinationAppoinment(patient_guid, patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value],
+                                        patient[Dict_Data.KEY_LABEL_PHONE_NUMBER.value], 10)
         # save the date in store_date.json
         JsonStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
@@ -61,13 +63,13 @@ class VaccineManager():
 
     def validate_phone_label(self, patient):
         try:
-            PhoneNumber(patient["ContactPhoneNumber"])
+            PhoneNumber(patient[Dict_Data.KEY_LABEL_PHONE_NUMBER.value])
         except KeyError as exception:
             raise VaccineManagementException("Bad label contact phone") from exception
 
     def validate_system_id_label(self, patient):
         try:
-            MD5(patient["PatientSystemID"])
+            MD5(patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value])
         except KeyError as exception:
             raise VaccineManagementException("Bad label patient_id") from exception
 
@@ -83,6 +85,6 @@ class VaccineManager():
         freezer.start()
         patient = VaccinePatientRegister(guid, name, reg_type, phone, age)
         freezer.stop()
-        if patient.patient_system_id != patient_from_input["PatientSystemID"]:
+        if patient.patient_system_id != patient_from_input[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value]:
             raise VaccineManagementException("Patient's data have been manipulated")
         return guid

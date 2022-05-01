@@ -16,6 +16,7 @@ class Dict_Data(Enum):
     #Class for dictionary keys
     KEY_LABEL_VACC_PATIENT_SYS_ID = "_VaccinePatientRegister__patient_sys_id"
     KEY_LABEL_PATIENT_SYS_ID = "PatientSystemID"
+    KEY_LABEL_PHONE_NUMBER = "ContactPhoneNumber"
     KEY_LABEL_DATE_SIGNATURE = "_VaccinationAppoinment__date_signature"
     KEY_LABEL_DATE_APPOINTMENT_DATE = "_VaccinationAppoinment__appoinment_date"
     KEY_LABEL_VACCINE_PATIENT_ID = "_VaccinePatientRegister__patient_id"
