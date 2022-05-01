@@ -5,6 +5,8 @@ from uc3m_care import VaccinePatientRegister
 from uc3m_care.vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.cfg.vaccine_manager_config import PATIENTS_STORE, APPOINTMENTS_STORE, VACCINES_STORE
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.enum.enumerations import Mess_Error, Dict_Data
+
 class JsonStore:
 
     @staticmethod
@@ -42,14 +44,14 @@ class JsonStore:
                 data_list = json.load(file)
         except FileNotFoundError as exception:
             if is_registry:
-                raise VaccineManagementException("Store_patient not found") from exception
+                raise VaccineManagementException(Mess_Error.ERR_MESS_STORE_PATIENT_NOT_FOUND.value) from exception
             if is_patient_file:
-                raise VaccineManagementException("File is not found") from exception
+                raise VaccineManagementException(Mess_Error.ERR_MESS_FILE_NOT_FOUND.value) from exception
             if is_appointment:
-                raise VaccineManagementException("Store_date not found") from exception
+                raise VaccineManagementException(Mess_Error.ERR_MESS_STORE_DATE_NOT_FOUND.value) from exception
             data_list = []  # file is not found , so  init my data_list
         except json.JSONDecodeError as exception:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from exception
+            raise VaccineManagementException(Mess_Error.ERR_MESS_WRONG_JSON_FORMAT.value) from exception
         return data_list
 
     @staticmethod
@@ -58,59 +60,50 @@ class JsonStore:
             with open(file_store, "w", encoding="utf-8", newline="") as file:
                 json.dump(data_list, file, indent=2)
         except FileNotFoundError as exception:
-            raise VaccineManagementException("Wrong file or file path") from exception
+            raise VaccineManagementException(Mess_Error.ERR_MESS_WRONG_FILE.value) from exception
 
     @staticmethod
     def search_patient(patient: dict) -> dict:
-        KEY_LABEL_VACC_PATIENT_SYS_ID = "_VaccinePatientRegister__patient_sys_id"
-        KEY_LABEL_PATIENT_SYS_ID = "PatientSystemID"
-
         """Method for searching the patient in the store"""
         patient_list = JsonStore.load_from_json(PATIENTS_STORE, is_registry=True)
         # search this patient
         for item in patient_list:
-            if item[KEY_LABEL_VACC_PATIENT_SYS_ID] == patient[KEY_LABEL_PATIENT_SYS_ID]:
+            if item[Dict_Data.KEY_LABEL_VACC_PATIENT_SYS_ID.value] == patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value]:
                 return item
-        raise VaccineManagementException("patient_system_id is not found")
+        raise VaccineManagementException(Mess_Error.ERR_MESS_PATIENT_SYSID_NOT_FOUND.value)
 
     @staticmethod
     def search_date_appointment(date_signature: str)-> str:
-        KEY_LABEL_DATE_SIGNATURE = "_VaccinationAppoinment__date_signature"
-        KEY_LABEL_DATE_APPOINTMENT_DATE = "_VaccinationAppoinment__appoinment_date"
         # check if this date is in store_date
         # first read the file
         appointments_list = JsonStore.load_from_json(APPOINTMENTS_STORE, is_appointment=True)
         # search this date_signature
         found = False
         for item in appointments_list:
-            if item[KEY_LABEL_DATE_SIGNATURE] == date_signature:
+            if item[Dict_Data.KEY_LABEL_DATE_SIGNATURE.value] == date_signature:
                 found = True
-                date_time = item[KEY_LABEL_DATE_APPOINTMENT_DATE]
+                date_time = item[Dict_Data.KEY_LABEL_DATE_APPOINTMENT_DATE.value]
         if not found:
-            raise VaccineManagementException("date_signature is not found")
+            raise VaccineManagementException(Mess_Error.ERR_MESS_DATE_NOT_FOUND.value)
         return date_time
 
     @staticmethod
     def check_patient_duplicated(data_list: dict, json_data: dict)-> None:
-        KEY_LABEL_VACCINE_PATIENT_ID = "_VaccinePatientRegister__patient_id"
-        KEY_LABEL_VACCINE_REG_TYPE = "_VaccinePatientRegister__registration_type"
-        KEY_LABEL_VACCINE_NAME = "_VaccinePatientRegister__full_name"
-
         key_found = False
         for item in data_list:
-            if item[KEY_LABEL_VACCINE_PATIENT_ID] == json_data.patient_id:
-                if (item[KEY_LABEL_VACCINE_REG_TYPE] == json_data.vaccine_type) and \
-                        (item[KEY_LABEL_VACCINE_NAME] == json_data.full_name):
+            if item[Dict_Data.KEY_LABEL_VACCINE_PATIENT_ID.value] == json_data.patient_id:
+                if (item[Dict_Data.KEY_LABEL_VACCINE_REG_TYPE.value] == json_data.vaccine_type) and \
+                        (item[Dict_Data.KEY_LABEL_VACCINE_NAME.value] == json_data.full_name):
                     key_found = True
         if key_found is False:
             data_list.append(json_data.__dict__)
         elif key_found is True:
-            raise VaccineManagementException("patien_id is registered in store_patient")
+            raise VaccineManagementException(Mess_Error.ERR_MESS_PATIENT_REGISTERED.value)
 
     @staticmethod
     def found_patient_on_store(patient: str)-> str:
         try:
             patient_found = JsonStore.search_patient(patient)
         except KeyError as exception:
-            raise VaccineManagementException("Patient's data have been manipulated") from exception
+            raise VaccineManagementException(Mess_Error.ERR_MESS_PATIENT_DATA_MANIPULATED.value) from exception
         return patient_found
