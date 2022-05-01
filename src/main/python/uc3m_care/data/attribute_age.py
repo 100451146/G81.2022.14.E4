@@ -3,15 +3,15 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 
 class Age(Attribute):
-    def __init__(self, attr_value):
+    def __init__(self, age):
         self._validation_pattern = None
         self._error_message = "age is not valid"
-        self._attr_value = self._validate(attr_value)
+        self._attr_value = self._validate(age)
 
-    def _validate(self, attr_value: int) -> int:
-        if attr_value.isnumeric():
-            if (int(attr_value) < 6 or int(attr_value) > 125):
+    def _validate(self, age: int) -> int:
+        if age.isnumeric():
+            if (int(age) < 6 or int(age) > 125):
                 raise VaccineManagementException("age is not valid")
         else:
             raise VaccineManagementException("age is not valid")
-        return attr_value
+        return age

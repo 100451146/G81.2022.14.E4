@@ -4,17 +4,17 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 
 class Uuid(Attribute):
-    def __init__(self, attr_value):
+    def __init__(self, guid):
         self._validation_pattern = r"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]" \
                                    "{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
         self._error_message = "UUID invalid"
-        self._attr_value = self._validate(attr_value)
+        self._attr_value = self._validate(guid)
 
-    def _validate(self, attr_value: str) -> str:
+    def _validate(self, guid: str) -> str:
         """Method for validating uuid  v4"""
         try:
-            my_uuid = uuid.UUID(attr_value)
-            super()._validate(attr_value)
+            my_uuid = uuid.UUID(guid)
+            super()._validate(guid)
         except ValueError as value_error:
             raise VaccineManagementException("Id received is not a UUID") from value_error
-        return attr_value
+        return guid

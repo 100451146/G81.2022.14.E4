@@ -94,7 +94,7 @@ class TestGetVaccineDate(TestCase):
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.get_vaccine_date(file_test)
-                self.assertEqual(c_m.exception.message, expected_value)
+                self.assertEqual(c_m.exception.ex_message, expected_value)
 
                 # read the file again to compare
                 if os.path.isfile(file_store_date):
@@ -123,7 +123,7 @@ class TestGetVaccineDate(TestCase):
         #check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test)
-        self.assertEqual(c_m.exception.message, "patient system id is not valid")
+        self.assertEqual(c_m.exception.ex_message, "patient system id is not valid")
 
         # read the file again to campare
         if os.path.isfile(file_store_date):
@@ -152,7 +152,7 @@ class TestGetVaccineDate(TestCase):
     #check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test)
-        self.assertEqual(c_m.exception.message, "JSON Decode Error - Wrong JSON Format")
+        self.assertEqual(c_m.exception.ex_message, "JSON Decode Error - Wrong JSON Format")
 
     #read the file again to campare
         if os.path.isfile(file_store_date):
@@ -203,5 +203,5 @@ class TestGetVaccineDate(TestCase):
         else:
             hash_new = ""
 
-        self.assertEqual(c_m.exception.message, "Patient's data have been manipulated")
+        self.assertEqual(c_m.exception.ex_message, "Patient's data have been manipulated")
         self.assertEqual(hash_new, hash_original)

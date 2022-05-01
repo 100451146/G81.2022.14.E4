@@ -1,11 +1,11 @@
 from .attribute import Attribute
 
 class SHA256(Attribute):
-    def __init__(self, attr_value):
+    def __init__(self, sha256):
         """Method for validating sha256 values"""
         self._validation_pattern = r"[0-9a-fA-F]{64}$"
         self._error_message = "date_signature format is not valid"
-        self._attr_value = self._validate(attr_value)
+        self._attr_value = self._validate(sha256)
 
     #def _validate(self, attr_value: str) -> str:
     #    """Method for validating uuid  v4"""

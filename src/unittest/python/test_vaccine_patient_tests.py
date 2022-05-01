@@ -72,7 +72,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "Today is not the date")
+        self.assertEqual(context_manager.exception.ex_message, "Today is not the date")
 
         # read the file again to compare
         if os.path.isfile(file_store_vaccine):
@@ -99,7 +99,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "date_signature format is not valid")
+        self.assertEqual(context_manager.exception.ex_message, "date_signature format is not valid")
 
         # read the file again to compare
         if os.path.isfile(file_store_vaccine):
@@ -126,7 +126,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "7a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.ex_message, "date_signature is not found")
 
         # read the file again to compare
         if os.path.isfile(file_store_vaccine):
@@ -148,7 +148,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "Store_date not found")
+        self.assertEqual(context_manager.exception.ex_message, "Store_date not found")
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_store_date_is_empty(self):
@@ -163,4 +163,4 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.ex_message, "date_signature is not found")
