@@ -1,11 +1,11 @@
 from .attribute import Attribute
-
+from uc3m_care.enum.enumerations import Correct_Pattern, Mess_Attr
 
 class MD5(Attribute):
     def __init__(self, md5: str)-> None:
         """Method for validating sha256 values"""
-        self._validation_pattern = r"[0-9a-fA-F]{32}$"
-        self._error_message = "patient system id is not valid"
+        self._validation_pattern = Correct_Pattern.MD5_PATTERN.value
+        self._error_message = Mess_Attr.MESS_MD5_INVALID.value
         self._attr_value = self._validate(md5)
 
 

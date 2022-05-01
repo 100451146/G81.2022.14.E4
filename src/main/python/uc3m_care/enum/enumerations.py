@@ -1,7 +1,7 @@
 from enum import Enum
 
 class Mess_Error(Enum):
-    #Class for messages on VaccineManagementException
+    #Class for VaccineManagementException's messages
     ERR_MESS_STORE_PATIENT_NOT_FOUND = "Store_patient not found"
     ERR_MESS_FILE_NOT_FOUND = "File is not found"
     ERR_MESS_STORE_DATE_NOT_FOUND = "Store_date not found"
@@ -13,6 +13,7 @@ class Mess_Error(Enum):
     ERR_MESS_PATIENT_DATA_MANIPULATED = "Patient's data have been manipulated"
 
 class Dict_Data(Enum):
+    #Class for dictionary keys
     KEY_LABEL_VACC_PATIENT_SYS_ID = "_VaccinePatientRegister__patient_sys_id"
     KEY_LABEL_PATIENT_SYS_ID = "PatientSystemID"
     KEY_LABEL_DATE_SIGNATURE = "_VaccinationAppoinment__date_signature"
@@ -20,4 +21,26 @@ class Dict_Data(Enum):
     KEY_LABEL_VACCINE_PATIENT_ID = "_VaccinePatientRegister__patient_id"
     KEY_LABEL_VACCINE_REG_TYPE = "_VaccinePatientRegister__registration_type"
     KEY_LABEL_VACCINE_NAME = "_VaccinePatientRegister__full_name"
+
+class Mess_Attr(Enum):
+    #Class for Attributes messages
+    MESS_NOT_DAY = "Today is not the date"
+    MESS_AGE_INVALID = "age is not valid"
+    MESS_NAME_INVALID = "name surname is not valid"
+    MESS_PHONE_INVALID = "phone number is not valid"
+    MESS_REGISTRATION_INVALID = "Registration type is nor valid"
+    MESS_UUID_INVALID = "UUID invalid"
+    MESS_NOT_UUID = "Id received is not a UUID"
+    MESS_MD5_INVALID = "patient system id is not valid"
+    MESS_SHA256_INVALID = "date_signature format is not valid"
+
+class Correct_Pattern(Enum):
+    #Class for attribute pattern
+    NAME_PATTERN = r"^(?=^.{1,30}$)(([a-zA-Z]+\s)+[a-zA-Z]+)$"
+    PHONE_PATTERN = r"^(\+)[0-9]{11}"
+    REGISTRATION_PATTERN = r"(Regular|Family)"
+    UUID_PATTERN = r"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]" \
+                   r"{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+    MD5_PATTERN = r"[0-9a-fA-F]{32}$"
+    SHA256_PATTERN = r"[0-9a-fA-F]{64}$"
 
