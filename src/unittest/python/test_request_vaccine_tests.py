@@ -7,6 +7,7 @@ from freezegun import freeze_time
 from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH
+from uc3m_care.enum.enumerations import Mess_Error, Mess_Attr
 
 # """
 #      import uuid
@@ -162,7 +163,7 @@ class TestRequestVacID(unittest.TestCase):
             value = my_request.request_vaccination_id("a729d963-e0dd-47d0-8bc6-b6c595ad0098",
                                                       "Pedro Perez", "Regular", "+34333456789", "124")
         self.assertEqual(context_manager.exception.ex_message,
-                         "patien_id is registered in store_patient")
+                         Mess_Error.ERR_MESS_PATIENT_REGISTERED.value)
 
         with open(file_store, "r", encoding="utf-8", newline="") as file:
             data_list = json.load(file)
@@ -224,7 +225,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "Regular",
                                               "+34123456789", "22")
-        self.assertEqual("UUID invalid", context_manager.exception.ex_message)
+        self.assertEqual(Mess_Attr.MESS_UUID_INVALID.value, context_manager.exception.ex_message)
 
     def test_request_vaccination_id_nok_uuid_2(self):
         """UUID is not hexadecimal"""
@@ -233,7 +234,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("zb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "Regular",
                                               "+34123456789", "22")
-        self.assertEqual("Id received is not a UUID", context_manager.exception.ex_message)
+        self.assertEqual(Mess_Attr.MESS_NOT_UUID.value, context_manager.exception.ex_message)
 
     def test_request_registration_type_nok(self):
         """registration type is not ok"""
@@ -242,7 +243,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("bb5dbd6f-d8b4-413f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "+34123456789",
                                               "Regularito", "22")
-        self.assertEqual("Registration type is nor valid", context_manager.exception.ex_message)
+        self.assertEqual(Mess_Attr.MESS_REGISTRATION_INVALID.value, context_manager.exception.ex_message)
 
 
 if __name__ == '__main__':
