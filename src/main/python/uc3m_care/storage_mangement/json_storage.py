@@ -54,6 +54,15 @@ class JsonStore:
             raise VaccineManagementException(Mess_Error.ERR_MESS_WRONG_JSON_FORMAT.value) from exception
         return data_list
 
+    def load_json(input_file: str):
+        try:
+            with open(input_file, "r", encoding="utf-8", newline="") as file:
+                json_data = json.load(file)
+        except json.JSONDecodeError as exception:
+            raise VaccineManagementException(Mess_Error.ERR_MESS_WRONG_JSON_FORMAT.value) from exception
+        return json_data
+
+
     @staticmethod
     def append_json_data(data_list, file_store: str) -> None:
         try:
@@ -66,6 +75,7 @@ class JsonStore:
     def search_patient(patient: dict) -> dict:
         """Method for searching the patient in the store"""
         patient_list = JsonStore.load_from_json(PATIENTS_STORE, is_registry=True)
+        #patient_list = RegistryStore.load_registry()
         # search this patient
         for item in patient_list:
             if item[Dict_Data.KEY_LABEL_VACC_PATIENT_SYS_ID.value] == patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value]:
