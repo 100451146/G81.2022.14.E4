@@ -5,8 +5,8 @@ from uc3m_care.exception.vaccine_management_exception import VaccineManagementEx
 
 class VaccineLog:
     def __init__(self, date_signature):
-        self.validate_date_signature(date_signature)
-        self.__date_signature = datetime.utcnow().__str__()
+        self.__date_signature = self.validate_date_signature(date_signature)
+        self.__date = datetime.utcnow().__str__()
 
     @staticmethod
     def validate_date_signature(date_signature: str) -> str:
