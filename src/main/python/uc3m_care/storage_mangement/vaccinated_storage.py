@@ -1,4 +1,3 @@
-import datetime
 
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH, VACCINES_STORE
 from uc3m_care.storage_mangement.json_storage import JsonStore

@@ -7,8 +7,8 @@ class VaccineLog():
         self.__date_signature = self.validate_date_signature(date_signature)
         self.__date = datetime.utcnow().__str__()
 
-    def validate_date_signature(self, date_signature: str)-> None:
-
+    @staticmethod
+    def validate_date_signature(date_signature: str)-> None:
         date_signature_pattern = re.compile(r"[0-9A-fA-F]{64}$")
         result = date_signature_pattern.fullmatch(date_signature)
         if not result:
