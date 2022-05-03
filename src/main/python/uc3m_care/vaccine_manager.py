@@ -16,16 +16,16 @@ from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.enum.enumerations import Dict_Data
 
 
-class VaccineManager():
+class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
 
     # pylint: disable=too-many-arguments
-    def request_vaccination_id(self, patient_id: str,
+    @staticmethod
+    def request_vaccination_id(patient_id: str,
                                name_surname: str,
                                registration_type: str,
                                phone_number: str,
                                age: str) -> str:
-
         my_patient = VaccinePatientRegister(patient_id,
                                             name_surname,
                                             registration_type,
@@ -53,18 +53,19 @@ class VaccineManager():
         AppointmentsStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
 
-    def vaccine_patient(self, date_signature: str)-> True:
+    @staticmethod
+    def vaccine_patient(date_signature: str) -> True:
         """Register the vaccination of the patient"""
 
         SHA256(date_signature)
         vaccination_time = AppointmentsStore.search_date_appointment(date_signature)
         Date(vaccination_time)
-        #JsonStore.save_vaccinated(date_signature)
+        # JsonStore.save_vaccinated(date_signature)
         VaccinationStorage.save_vaccinated(date_signature)
         return True
 
-
-    def check_patient_data(self, patient_from_input:dict, patient_from_storage:dict):
+    @staticmethod
+    def check_patient_data(patient_from_input: dict, patient_from_storage: dict) -> str:
         guid = patient_from_storage["_VaccinePatientRegister__patient_id"]
         name = patient_from_storage["_VaccinePatientRegister__full_name"]
         reg_type = patient_from_storage["_VaccinePatientRegister__registration_type"]

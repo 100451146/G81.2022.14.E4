@@ -33,7 +33,7 @@ class RegistryStore(JsonStore):
         raise VaccineManagementException(Mess_Error.ERR_MESS_PATIENT_SYSID_NOT_FOUND.value)
 
     @staticmethod
-    def search_patient_on_storage(patient: str) -> str:
+    def search_patient_on_storage(patient: str) -> dict:
         try:
             patient_found = RegistryStore.search_patient(patient)
         except KeyError as exception:
