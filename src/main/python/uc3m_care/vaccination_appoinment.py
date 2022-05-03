@@ -1,23 +1,38 @@
 """Contains the class Vaccination Appointment"""
 import hashlib
 from datetime import datetime
+from freezegun import freeze_time
+
+from uc3m_care import VaccinePatientRegister
 from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.data.hash_guid4 import Uuid
 from uc3m_care.data.attribute_phone_number import PhoneNumber
 
 
 # pylint: disable=too-many-instance-attributes
+from uc3m_care.enum.enumerations import DictData, MessError
+from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.parser.appointment_parser import AppointmentParser
+from uc3m_care.storage_mangement.appointments_storage import AppointmentsStore
+from uc3m_care.storage_mangement.registry_storage import RegistryStore
+
+
 class VaccinationAppoinment:
     """Class representing an appointment  for the vaccination of a patient"""
-
-    def __init__(self, guid, patient_sys_id, patient_phone_number, days):
+    def __init__(self, input_file):
+        """Initializes the class"""
+        self.__patient = AppointmentsStore.load_patient_file(input_file)
+        AppointmentParser.validate_system_id_label(self.__patient)
+        AppointmentParser.validate_phone_label(self.__patient)
+        self.__patient_found = RegistryStore.search_patient_on_storage(self.__patient)
         self.__alg = "SHA-256"
         self.__type = "DS"
-        self.__patient_id = Uuid(guid).value
-        self.__patient_sys_id = MD5(patient_sys_id).value
-        self.__phone_number = PhoneNumber(patient_phone_number).value
+        self.__patient_id = self.check_patient_data_signature(self.__patient, self.__patient_found)
+        self.__patient_sys_id = MD5(self.__patient[DictData.KEY_LABEL_PATIENT_SYS_ID.value]).value
+        self.__phone_number = PhoneNumber(self.__patient[DictData.KEY_LABEL_PHONE_NUMBER.value]).value
         justnow = datetime.utcnow()
         self.__issued_at = datetime.timestamp(justnow)
+        days = 10
         if days == 0:
             self.__appoinment_date = 0
         else:
@@ -82,3 +97,20 @@ class VaccinationAppoinment:
     def date_signature(self):
         """Returns the SHA256 """
         return self.__date_signature
+
+    @staticmethod
+    def check_patient_data_signature(patient_from_input: dict, patient_from_storage: dict) -> str:
+        guid = patient_from_storage[DictData.KEY_LABEL_VACCINE_PATIENT_ID.value]
+        name = patient_from_storage[DictData.KEY_LABEL_VACCINE_NAME.value]
+        reg_type = patient_from_storage[DictData.KEY_LABEL_VACCINE_REG_TYPE.value]
+        phone = patient_from_storage[DictData.KEY_LABEL_VACCINE_PATIENT_PHONE.value]
+        patient_timestamp = patient_from_storage[DictData.KEY_LABEL_TIME.value]
+        age = patient_from_storage[DictData.KEY_LABEL_AGE.value]
+        # set the date when the patient was registered for checking the md5
+        freezer = freeze_time(datetime.fromtimestamp(patient_timestamp).date())
+        freezer.start()
+        patient = VaccinePatientRegister(guid, name, reg_type, phone, age)
+        freezer.stop()
+        if patient.patient_system_id != patient_from_input[DictData.KEY_LABEL_PATIENT_SYS_ID.value]:
+            raise VaccineManagementException(MessError.ERR_MESS_PATIENT_DATA_MANIPULATED.value)
+        return guid
