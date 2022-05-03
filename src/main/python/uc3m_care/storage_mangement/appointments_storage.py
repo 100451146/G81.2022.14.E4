@@ -1,5 +1,4 @@
-from uc3m_care import VaccinePatientRegister  # , VaccinationAppoinment
-from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH, PATIENTS_STORE, APPOINTMENTS_STORE
+from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH, APPOINTMENTS_STORE
 from uc3m_care.enum.enumerations import Mess_Error, Dict_Data
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage_mangement.json_storage import JsonStore
@@ -25,7 +24,8 @@ class AppointmentsStore(JsonStore):
         try:
             data_list = JsonStore.load_json(APPOINTMENTS_STORE)
         except FileNotFoundError as exception:
-            data_list = []
+            if exception:
+                data_list = []
         # append the date
         data_list.append(date.__dict__)
         JsonStore.save_json_data(data_list, APPOINTMENTS_STORE)

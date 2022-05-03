@@ -1,7 +1,7 @@
 import json
 
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.enum.enumerations import Mess_Error, Dict_Data
+from uc3m_care.enum.enumerations import Mess_Error
 
 
 class JsonStore:

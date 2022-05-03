@@ -200,6 +200,5 @@ class TestGetVaccineDate(TestCase):
                 hash_new = hashlib.md5(file.__str__().encode()).hexdigest()
         else:
             hash_new = ""
-
         self.assertEqual(c_m.exception.ex_message, Mess_Error.ERR_MESS_PATIENT_DATA_MANIPULATED.value)
         self.assertEqual(hash_new, hash_original)
