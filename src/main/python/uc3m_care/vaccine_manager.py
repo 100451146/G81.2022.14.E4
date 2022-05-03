@@ -4,6 +4,9 @@ from datetime import datetime
 from freezegun import freeze_time
 
 from uc3m_care.storage_mangement.json_storage import JsonStore
+from .storage_mangement.appointments_storage import AppointmentsStore
+from .storage_mangement.registry_storage import RegistryStore
+from .storage_mangement.vaccinated_storage import VaccinationStorage
 from .vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from .vaccination_appoinment import VaccinationAppoinment
@@ -30,34 +33,35 @@ class VaccineManager():
                                             phone_number,
                                             age)
 
-        JsonStore.save_patient_in_storage(my_patient)
+        RegistryStore.save_patient_in_storage(my_patient)
 
         return my_patient.patient_sys_id
 
     def get_vaccine_date(self, input_file):
         """Gets an appointment for a registered patient"""
 
-        patient = JsonStore.load_from_json(input_file, is_patient_file=True)
+        patient = AppointmentsStore.load_patient_file(input_file)
 
         self.validate_system_id_label(patient)
         self.validate_phone_label(patient)
 
-        patient_found = JsonStore.found_patient_on_store(patient)
+        patient_found = RegistryStore.search_patient_on_storage(patient)
 
         patient_guid = self.check_patient_data(patient, patient_found)
         my_sign = VaccinationAppoinment(patient_guid, patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value],
                                         patient[Dict_Data.KEY_LABEL_PHONE_NUMBER.value], 10)
         # save the date in store_date.json
-        JsonStore.save_vaccination_appointment(my_sign)
+        AppointmentsStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
 
     def vaccine_patient(self, date_signature: str)-> True:
         """Register the vaccination of the patient"""
 
         SHA256(date_signature)
-        vaccination_time = JsonStore.search_date_appointment(date_signature)
+        vaccination_time = AppointmentsStore.search_date_appointment(date_signature)
         Date(vaccination_time)
-        JsonStore.save_vaccinated(date_signature)
+        #JsonStore.save_vaccinated(date_signature)
+        VaccinationStorage.save_vaccinated(date_signature)
 
         return True
 
