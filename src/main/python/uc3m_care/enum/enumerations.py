@@ -37,6 +37,8 @@ class Mess_Attr(Enum):
     MESS_NOT_UUID = "Id received is not a UUID"
     MESS_MD5_INVALID = "patient system id is not valid"
     MESS_SHA256_INVALID = "date_signature format is not valid"
+    MESS_BAD_LABEL_PHONE = "Bad label contact phone"
+    MESS_BAD_LABEL_PATIENT_ID = "Bad label patient_id"
 
 class Correct_Pattern(Enum):
     #Class for attribute pattern
