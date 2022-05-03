@@ -10,40 +10,50 @@ from .storage_mangement.vaccinated_storage import VaccinationStorage
 
 
 class VaccineManager:
-    """Class for providing the methods for managing the vaccination process"""
 
-    # pylint: disable=too-many-arguments
-    @staticmethod
-    def request_vaccination_id(patient_id: str,
-                               name_surname: str,
-                               registration_type: str,
-                               phone_number: str,
-                               age: str) -> str:
-        my_patient = VaccinePatientRegister(patient_id,
-                                            name_surname,
-                                            registration_type,
-                                            phone_number,
-                                            age)
+    class __VaccineManager:
 
-        RegistryStore.save_patient_in_storage(my_patient)
+        """Class for providing the methods for managing the vaccination process"""
 
-        return my_patient.patient_sys_id
+        # pylint: disable=too-many-arguments
+        @staticmethod
+        def request_vaccination_id(patient_id: str,
+                                   name_surname: str,
+                                   registration_type: str,
+                                   phone_number: str,
+                                   age: str) -> str:
+            my_patient = VaccinePatientRegister(patient_id,
+                                                name_surname,
+                                                registration_type,
+                                                phone_number,
+                                                age)
 
-    @staticmethod
-    def get_vaccine_date(input_file: str) -> str:
-        """Gets an appointment for a registered patient"""
-        my_signature = VaccinationAppoinment(input_file)
-        # save the date in store_date.json
-        AppointmentsStore.save_vaccination_appointment(my_signature)
-        return my_signature.date_signature
+            RegistryStore.save_patient_in_storage(my_patient)
 
-    @staticmethod
-    def vaccine_patient(date_signature: str) -> True:
-        """Register the vaccination of the patient"""
+            return my_patient.patient_sys_id
 
-        SHA256(date_signature)
-        vaccination_time = AppointmentsStore.search_date_appointment(date_signature)
-        Date(vaccination_time)
-        # JsonStore.save_vaccinated(date_signature)
-        VaccinationStorage.save_vaccinated(date_signature)
-        return True
+        @staticmethod
+        def get_vaccine_date(input_file: str) -> str:
+            """Gets an appointment for a registered patient"""
+            my_signature = VaccinationAppoinment(input_file)
+            # save the date in store_date.json
+            AppointmentsStore.save_vaccination_appointment(my_signature)
+            return my_signature.date_signature
+
+        @staticmethod
+        def vaccine_patient(date_signature: str) -> True:
+            """Register the vaccination of the patient"""
+
+            SHA256(date_signature)
+            vaccination_time = AppointmentsStore.search_date_appointment(date_signature)
+            Date(vaccination_time)
+            # JsonStore.save_vaccinated(date_signature)
+            VaccinationStorage.save_vaccinated(date_signature)
+            return True
+
+    __instance = None
+
+    def __new__(cls):
+        if VaccineManager.__instance is None:
+            VaccineManager.__instance = VaccineManager.__VaccineManager()
+        return VaccineManager.__instance
