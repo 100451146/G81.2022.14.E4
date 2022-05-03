@@ -8,7 +8,7 @@ from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH
 from uc3m_care import JSON_FILES_RF2_PATH
-from uc3m_care.enum.enumerations import Mess_Error, Mess_Attr
+from uc3m_care.enum.enumerations import MessError, MessAttr
 
 param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_char_plus.json", "phone number is not valid"),
@@ -123,7 +123,7 @@ class TestGetVaccineDate(TestCase):
         # check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test)
-        self.assertEqual(c_m.exception.ex_message, Mess_Attr.MESS_MD5_INVALID.value)
+        self.assertEqual(c_m.exception.ex_message, MessAttr.MESS_MD5_INVALID.value)
 
         # read the file again to compare
         if os.path.isfile(file_store_date):
@@ -151,7 +151,7 @@ class TestGetVaccineDate(TestCase):
         # check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test)
-        self.assertEqual(c_m.exception.ex_message, Mess_Error.ERR_MESS_WRONG_JSON_FORMAT.value)
+        self.assertEqual(c_m.exception.ex_message, MessError.ERR_MESS_WRONG_JSON_FORMAT.value)
 
         # read the file again to compare
         if os.path.isfile(file_store_date):
@@ -200,5 +200,5 @@ class TestGetVaccineDate(TestCase):
                 hash_new = hashlib.md5(file.__str__().encode()).hexdigest()
         else:
             hash_new = ""
-        self.assertEqual(c_m.exception.ex_message, Mess_Error.ERR_MESS_PATIENT_DATA_MANIPULATED.value)
+        self.assertEqual(c_m.exception.ex_message, MessError.ERR_MESS_PATIENT_DATA_MANIPULATED.value)
         self.assertEqual(hash_new, hash_original)

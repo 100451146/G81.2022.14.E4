@@ -1,9 +1,6 @@
 import datetime
 
-from uc3m_care import VaccinePatientRegister
-from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH, PATIENTS_STORE, VACCINES_STORE
-from uc3m_care.enum.enumerations import Mess_Error, Dict_Data
-from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH, VACCINES_STORE
 from uc3m_care.storage_mangement.json_storage import JsonStore
 
 
@@ -13,8 +10,8 @@ class VaccinationStorage(JsonStore):
     @staticmethod
     def save_vaccinated(date_signature: str) -> None:
         try:
-            vaccinated_list = JsonStore.load_json(VACCINES_STORE)
-        except FileNotFoundError as exception:
+            vaccinated_list = JsonStore.load_json(VaccinationStorage._FILE_PATH)
+        except FileNotFoundError:
             vaccinated_list = []
         # append the date
         vaccinated_list.extend({date_signature.__str__(), datetime.datetime.utcnow().__str__()})

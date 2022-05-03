@@ -1,15 +1,16 @@
-"""Contains the class Vaccination Appoinment"""
+"""Contains the class Vaccination Appointment"""
+import hashlib
 from datetime import datetime
 from uc3m_care.data.hash_md5 import MD5
 from uc3m_care.data.hash_guid4 import Uuid
 from uc3m_care.data.attribute_phone_number import PhoneNumber
-import hashlib
+
 
 # pylint: disable=too-many-instance-attributes
-class VaccinationAppoinment():
-    """Class representing an appoinment  for the vaccination of a patient"""
+class VaccinationAppoinment:
+    """Class representing an appointment  for the vaccination of a patient"""
 
-    def __init__( self, guid, patient_sys_id, patient_phone_number, days ):
+    def __init__(self, guid, patient_sys_id, patient_phone_number, days):
         self.__alg = "SHA-256"
         self.__type = "DS"
         self.__patient_id = Uuid(guid).value
@@ -20,20 +21,19 @@ class VaccinationAppoinment():
         if days == 0:
             self.__appoinment_date = 0
         else:
-            #timestamp is represneted in seconds.microseconds
-            #age must be expressed in senconds to be added to the timestap
+            # timestamp is represented in seconds.microseconds
+            # age must be expressed in seconds to be added to the timestamp
             self.__appoinment_date = self.__issued_at + (days * 24 * 60 * 60)
         self.__date_signature = self.vaccination_signature
 
-
     def __signature_string(self):
         """Composes the string to be used for generating the key for the date"""
-        return "{alg:" + self.__alg +",typ:" + self.__type +",patient_sys_id:" + \
+        return "{alg:" + self.__alg + ",typ:" + self.__type + ",patient_sys_id:" + \
                self.__patient_sys_id + ",issuedate:" + self.__issued_at.__str__() + \
                ",vaccinationtiondate:" + self.__appoinment_date.__str__() + "}"
 
     @property
-    def patient_id( self ):
+    def patient_id(self):
         """Property that represents the guid of the patient"""
         return self.__patient_id
 
@@ -45,6 +45,7 @@ class VaccinationAppoinment():
     def patient_sys_id(self):
         """Property that represents the patient_sys_id of the patient"""
         return self.__patient_sys_id
+
     @patient_sys_id.setter
     def patient_sys_id(self, value):
         self.__patient_sys_id = MD5(value).value
@@ -55,11 +56,11 @@ class VaccinationAppoinment():
         return self.__phone_number
 
     @phone_number.setter
-    def phone_number( self, value ):
+    def phone_number(self, value):
         self.__phone_number = PhoneNumber(value).value
 
     @property
-    def vaccination_signature( self ):
+    def vaccination_signature(self):
         """Returns the sha256 signature of the date"""
         return hashlib.sha256(self.__signature_string().encode()).hexdigest()
 
@@ -69,7 +70,7 @@ class VaccinationAppoinment():
         return self.__issued_at
 
     @issued_at.setter
-    def issued_at( self, value ):
+    def issued_at(self, value):
         self.__issued_at = value
 
     @property

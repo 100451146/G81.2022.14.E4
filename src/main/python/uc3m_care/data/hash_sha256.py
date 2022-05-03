@@ -1,14 +1,16 @@
-from .attribute import Attribute
-from uc3m_care.enum.enumerations import Correct_Pattern, Mess_Attr
+from uc3m_care.data.attribute import Attribute
+from uc3m_care.enum.enumerations import CorrectPattern, MessAttr
+
 
 class SHA256(Attribute):
-    def __init__(self, sha256: str)-> None:
+    def __init__(self, sha256: str) -> None:
         """Method for validating sha256 values"""
-        self._validation_pattern = Correct_Pattern.SHA256_PATTERN.value
-        self._error_message = Mess_Attr.MESS_SHA256_INVALID.value
+        super().__init__()
+        self._validation_pattern = CorrectPattern.SHA256_PATTERN.value
+        self._error_message = MessAttr.MESS_SHA256_INVALID.value
         self._attr_value = self._validate(sha256)
 
-    #def _validate(self, attr_value: str) -> str:
+    # def _validate(self, attr_value: str) -> str:
     #    """Method for validating uuid  v4"""
     #    try:
     #        super()._validate(attr_value)

@@ -4,6 +4,7 @@ disable=C0114,
         C0116,
         too-many-arguments, #for request_vaccination_id
         too-many-locals  #for get_vaccine_date
+        too-few-public-methods
 
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may

@@ -8,9 +8,11 @@ from uc3m_care.data.attribute_full_name import FullName
 from uc3m_care.data.attribute_age import Age
 from uc3m_care.data.attribute_phone_number import PhoneNumber
 
+
 class VaccinePatientRegister:
     """Class representing the register of the patient in the system"""
-    #pylint: disable=too-many-arguments
+
+    # pylint: disable=too-many-arguments
     def __init__(self, patient_id, full_name, registration_type, phone_number, age):
         self.__patient_id = Uuid(patient_id).value
         self.__full_name = FullName(full_name).value
@@ -19,8 +21,8 @@ class VaccinePatientRegister:
         self.__age = Age(age).value
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
-        #self.__time_stamp = 1645542405.232003
-        self.__patient_sys_id =  hashlib.md5(self.__str__().encode()).hexdigest()
+        # self.__time_stamp = 1645542405.232003
+        self.__patient_sys_id = hashlib.md5(self.__str__().encode()).hexdigest()
 
     def __str__(self):
         return "VaccinePatientRegister:" + json.dumps(self.__dict__)
@@ -46,20 +48,20 @@ class VaccinePatientRegister:
 
     @property
     def phone_number(self):
-        """Property representing the requester's phone number"""
+        """Property representing the requesters phone number"""
         return self.__phone_number
 
     @phone_number.setter
-    def phone_number( self, value ):
+    def phone_number(self, value):
         self.__phone_number = PhoneNumber(value).value
 
     @property
     def patient_id(self):
-        """Property representing the requester's UUID"""
+        """Property representing the requesters UUID"""
         return self.__patient_id
 
     @patient_id.setter
-    def patient_id( self, value ):
+    def patient_id(self, value):
         self.__patient_id = Uuid(value).value
 
     @property
@@ -81,4 +83,3 @@ class VaccinePatientRegister:
     def patient_sys_id(self):
         """Property representing the md5 generated"""
         return self.__patient_sys_id
-

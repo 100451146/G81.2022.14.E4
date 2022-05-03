@@ -8,8 +8,8 @@ from .vaccine_patient_register import VaccinePatientRegister
 from .vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.data.attribute_date import Date
 from uc3m_care.data.hash_sha256 import SHA256
-from uc3m_care.data.check_patient import Check_Patient
-from uc3m_care.enum.enumerations import Dict_Data
+from uc3m_care.data.check_patient import CheckPatient
+from uc3m_care.enum.enumerations import DictData
 
 
 class VaccineManager:
@@ -32,7 +32,8 @@ class VaccineManager:
 
         return my_patient.patient_sys_id
 
-    def get_vaccine_date(self, input_file):
+    @staticmethod
+    def get_vaccine_date(input_file: str) -> str:
         """Gets an appointment for a registered patient"""
 
         patient = AppointmentsStore.load_patient_file(input_file)
@@ -42,9 +43,9 @@ class VaccineManager:
 
         patient_found = RegistryStore.search_patient_on_storage(patient)
 
-        patient_guid = Check_Patient.check_patient_data(patient, patient_found)
-        my_sign = VaccinationAppoinment(patient_guid, patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value],
-                                        patient[Dict_Data.KEY_LABEL_PHONE_NUMBER.value], 10)
+        patient_guid = CheckPatient.check_patient_data(patient, patient_found)
+        my_sign = VaccinationAppoinment(patient_guid, patient[DictData.KEY_LABEL_PATIENT_SYS_ID.value],
+                                        patient[DictData.KEY_LABEL_PHONE_NUMBER.value], 10)
         # save the date in store_date.json
         AppointmentsStore.save_vaccination_appointment(my_sign)
         return my_sign.date_signature
