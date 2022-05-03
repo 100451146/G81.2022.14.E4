@@ -22,6 +22,9 @@ class Dict_Data(Enum):
     KEY_LABEL_VACCINE_PATIENT_ID = "_VaccinePatientRegister__patient_id"
     KEY_LABEL_VACCINE_REG_TYPE = "_VaccinePatientRegister__registration_type"
     KEY_LABEL_VACCINE_NAME = "_VaccinePatientRegister__full_name"
+    KEY_LABEL_TIME = "_VaccinePatientRegister__time_stamp"
+    KEY_LABEL_AGE = "_VaccinePatientRegister__age"
+    KEY_LABEL_VACCINE_PATIENT_PHONE = "_VaccinePatientRegister__phone_number"
 
 class Mess_Attr(Enum):
     #Class for Attributes messages
