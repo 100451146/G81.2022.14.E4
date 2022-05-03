@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from freezegun import freeze_time
 
-from uc3m_care.storage_mangement.json_storage import JsonStore
+from .parser.appointment_parser import AppointmentParser
 from .storage_mangement.appointments_storage import AppointmentsStore
 from .storage_mangement.registry_storage import RegistryStore
 from .storage_mangement.vaccinated_storage import VaccinationStorage
@@ -13,7 +13,6 @@ from .vaccination_appoinment import VaccinationAppoinment
 from uc3m_care.data.attribute_date import Date
 from uc3m_care.data.hash_sha256 import SHA256
 from uc3m_care.data.hash_md5 import MD5
-from uc3m_care.data.attribute_phone_number import PhoneNumber
 from uc3m_care.enum.enumerations import Dict_Data
 
 
@@ -42,8 +41,8 @@ class VaccineManager():
 
         patient = AppointmentsStore.load_patient_file(input_file)
 
-        self.validate_system_id_label(patient)
-        self.validate_phone_label(patient)
+        AppointmentParser.validate_system_id_label(patient)
+        AppointmentParser.validate_phone_label(patient)
 
         patient_found = RegistryStore.search_patient_on_storage(patient)
 
@@ -62,20 +61,8 @@ class VaccineManager():
         Date(vaccination_time)
         #JsonStore.save_vaccinated(date_signature)
         VaccinationStorage.save_vaccinated(date_signature)
-
         return True
 
-    def validate_phone_label(self, patient):
-        try:
-            PhoneNumber(patient[Dict_Data.KEY_LABEL_PHONE_NUMBER.value])
-        except KeyError as exception:
-            raise VaccineManagementException("Bad label contact phone") from exception
-
-    def validate_system_id_label(self, patient):
-        try:
-            MD5(patient[Dict_Data.KEY_LABEL_PATIENT_SYS_ID.value])
-        except KeyError as exception:
-            raise VaccineManagementException("Bad label patient_id") from exception
 
     def check_patient_data(self, patient_from_input:dict, patient_from_storage:dict):
         guid = patient_from_storage["_VaccinePatientRegister__patient_id"]
