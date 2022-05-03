@@ -2,7 +2,7 @@ from datetime import datetime
 
 from uc3m_care.enum.enumerations import MessAttr
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-from uc3m_care.data.attribute import Attribute
+from uc3m_care.data.attribute.attribute import Attribute
 
 
 class Date(Attribute):

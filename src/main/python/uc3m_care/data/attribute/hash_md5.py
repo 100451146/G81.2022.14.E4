@@ -1,4 +1,4 @@
-from uc3m_care.data.attribute import Attribute
+from uc3m_care.data.attribute.attribute import Attribute
 from uc3m_care.enum.enumerations import CorrectPattern, MessAttr
 
 

@@ -1,13 +1,12 @@
 """Module """
 
-from .parser.appointment_parser import AppointmentParser
 from .storage_mangement.appointments_storage import AppointmentsStore
 from .storage_mangement.registry_storage import RegistryStore
 from .storage_mangement.vaccinated_storage import VaccinationStorage
-from .vaccine_patient_register import VaccinePatientRegister
-from .vaccination_appoinment import VaccinationAppoinment
-from uc3m_care.data.attribute_date import Date
-from uc3m_care.data.hash_sha256 import SHA256
+from uc3m_care.vaccine_patient_register import VaccinePatientRegister
+from uc3m_care.vaccination_appoinment import VaccinationAppoinment
+from uc3m_care.data.attribute.attribute_date import Date
+from uc3m_care.data.attribute.hash_sha256 import SHA256
 
 
 class VaccineManager:

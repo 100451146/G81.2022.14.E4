@@ -1,5 +1,5 @@
 from uc3m_care.enum.enumerations import MessAttr, CorrectPattern
-from uc3m_care.data.attribute import Attribute
+from uc3m_care.data.attribute.attribute import Attribute
 
 
 class PhoneNumber(Attribute):

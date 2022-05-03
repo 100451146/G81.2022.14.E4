@@ -1,5 +1,5 @@
-from uc3m_care.data.attribute_phone_number import PhoneNumber
-from uc3m_care.data.hash_md5 import MD5
+from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
+from uc3m_care.data.attribute.hash_md5 import MD5
 from uc3m_care.enum.enumerations import DictData
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.enum.enumerations import MessAttr

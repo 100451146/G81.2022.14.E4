@@ -4,9 +4,9 @@ from datetime import datetime
 from freezegun import freeze_time
 
 from uc3m_care import VaccinePatientRegister
-from uc3m_care.data.hash_md5 import MD5
-from uc3m_care.data.hash_guid4 import Uuid
-from uc3m_care.data.attribute_phone_number import PhoneNumber
+from uc3m_care.data.attribute.hash_md5 import MD5
+from uc3m_care.data.attribute.hash_guid4 import Uuid
+from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 
 
 # pylint: disable=too-many-instance-attributes
